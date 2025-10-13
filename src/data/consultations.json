@@ -1,0 +1,39 @@
+[
+  {
+    "id": "consult-1",
+    "patientId": "patient-1",
+    "specialistId": "specialist-1",
+    "gpId": "gp-1",
+    "date": "2024-10-05",
+    "time": "14:00",
+    "status": "scheduled",
+    "specialty": "Cardiology",
+    "notes": "Follow-up for hypertension management",
+    "type": "video"
+  },
+  {
+    "id": "consult-2",
+    "patientId": "patient-2",
+    "specialistId": "specialist-1",
+    "gpId": "gp-2",
+    "date": "2024-10-03",
+    "time": "10:30",
+    "status": "completed",
+    "specialty": "Cardiology",
+    "notes": "Initial consultation for chest pain",
+    "type": "in-person",
+    "outcome": "Referred for further testing"
+  },
+  {
+    "id": "consult-3",
+    "patientId": "patient-1",
+    "specialistId": "specialist-1",
+    "gpId": "gp-1",
+    "date": "2024-10-08",
+    "time": "16:00",
+    "status": "scheduled",
+    "specialty": "Cardiology",
+    "notes": "Review of recent echocardiogram results",
+    "type": "video"
+  }
+]

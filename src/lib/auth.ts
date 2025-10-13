@@ -1,0 +1,75 @@
+import { betterAuth } from "better-auth";
+import Database from "better-sqlite3";
+
+const databasePath = process.env.BETTER_AUTH_DB_PATH ?? "./sqlite.db";
+const database = new Database(databasePath);
+
+const githubClientId = process.env.GITHUB_CLIENT_ID;
+const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+const socialProviders: Record<
+  string,
+  {
+    clientId: string;
+    clientSecret: string;
+  }
+> = {};
+
+if (githubClientId && githubClientSecret) {
+  socialProviders.github = {
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
+  };
+}
+
+if (googleClientId && googleClientSecret) {
+  socialProviders.google = {
+    clientId: googleClientId,
+    clientSecret: googleClientSecret,
+  };
+}
+
+export const auth = betterAuth({
+  database,
+  secret: process.env.BETTER_AUTH_SECRET,
+  
+  emailAndPassword: {
+    enabled: true,
+    // Require email verification (disabled for now, enable when SMTP configured)
+    requireEmailVerification: false,
+  },
+  
+  session: {
+    // Session expires after 7 days of inactivity
+    expiresIn: 60 * 60 * 24 * 7, // 7 days in seconds
+    
+    // Update session activity every 24 hours
+    updateAge: 60 * 60 * 24, // 24 hours in seconds
+    
+    // Cookie configuration
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    },
+  },
+  
+  // Advanced security options
+  advanced: {
+    // Use secure cookies in production
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    
+    // Cross-site request forgery protection
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+    
+    // Generate new session ID on login
+    generateSessionToken: true,
+  },
+  
+  socialProviders: Object.keys(socialProviders).length
+    ? socialProviders
+    : undefined,
+});

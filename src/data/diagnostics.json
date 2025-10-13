@@ -1,0 +1,46 @@
+[
+  {
+    "id": "diagnostic-1",
+    "patientId": "patient-1",
+    "gpId": "gp-1",
+    "diagnosticsId": "diagnostics-1",
+    "dateOrdered": "2024-10-01",
+    "status": "completed",
+    "tests": [
+      {
+        "name": "Blood Test - Full Blood Count",
+        "code": "FBC",
+        "status": "completed",
+        "result": "Normal",
+        "referenceRange": "Standard ranges",
+        "date": "2024-10-03"
+      },
+      {
+        "name": "X-Ray - Chest",
+        "code": "CXR",
+        "status": "completed",
+        "result": "Clear",
+        "referenceRange": "No abnormalities",
+        "date": "2024-10-03"
+      }
+    ]
+  },
+  {
+    "id": "diagnostic-2",
+    "patientId": "patient-2",
+    "gpId": "gp-2",
+    "diagnosticsId": "diagnostics-1",
+    "dateOrdered": "2024-09-28",
+    "status": "completed",
+    "tests": [
+      {
+        "name": "Urine Analysis",
+        "code": "UA",
+        "status": "completed",
+        "result": "Normal",
+        "referenceRange": "Standard ranges",
+        "date": "2024-09-30"
+      }
+    ]
+  }
+]

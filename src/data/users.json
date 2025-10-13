@@ -1,0 +1,70 @@
+[
+  {
+    "id": "patient-1",
+    "username": "patient1",
+    "password": "password123",
+    "role": "patient",
+    "name": "John Doe",
+    "email": "john.doe@email.com",
+    "phone": "+1-555-0101"
+  },
+  {
+    "id": "patient-2",
+    "username": "patient2",
+    "password": "password123",
+    "role": "patient",
+    "name": "Jane Smith",
+    "email": "jane.smith@email.com",
+    "phone": "+1-555-0102"
+  },
+  {
+    "id": "gp-1",
+    "username": "gp1",
+    "password": "password123",
+    "role": "gp",
+    "name": "Dr. Sarah Johnson",
+    "email": "sarah.johnson@gp.com",
+    "phone": "+1-555-0201",
+    "specialty": "General Practice"
+  },
+  {
+    "id": "gp-2",
+    "username": "gp2",
+    "password": "password123",
+    "role": "gp",
+    "name": "Dr. Michael Chen",
+    "email": "michael.chen@gp.com",
+    "phone": "+1-555-0202",
+    "specialty": "General Practice"
+  },
+  {
+    "id": "specialist-1",
+    "username": "specialist1",
+    "password": "password123",
+    "role": "specialist",
+    "name": "Dr. Emily Rodriguez",
+    "email": "emily.rodriguez@specialist.com",
+    "phone": "+1-555-0301",
+    "specialty": "Cardiology"
+  },
+  {
+    "id": "pharmacy-1",
+    "username": "pharmacy1",
+    "password": "password123",
+    "role": "pharmacy",
+    "name": "Anytown Pharmacy",
+    "email": "info@anytownpharmacy.com",
+    "phone": "+1-555-0401",
+    "address": "123 Main St, Anytown, USA"
+  },
+  {
+    "id": "diagnostics-1",
+    "username": "diagnostics1",
+    "password": "password123",
+    "role": "diagnostics",
+    "name": "Anytown Diagnostics Lab",
+    "email": "info@anytowndiagnostics.com",
+    "phone": "+1-555-0501",
+    "address": "456 Health Ave, Anytown, USA"
+  }
+]

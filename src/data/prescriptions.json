@@ -1,0 +1,44 @@
+[
+  {
+    "id": "prescription-1",
+    "patientId": "patient-1",
+    "gpId": "gp-1",
+    "dateIssued": "2024-10-01",
+    "qrToken": "QR123456789",
+    "status": "active",
+    "pharmacyId": "pharmacy-1",
+    "pharmacyName": "Anytown Pharmacy",
+    "items": [
+      {
+        "name": "Amoxicillin 500mg",
+        "dosage": "500mg three times daily",
+        "quantity": 21,
+        "instructions": "Take with food"
+      },
+      {
+        "name": "Ibuprofen 200mg",
+        "dosage": "200mg as needed",
+        "quantity": 14,
+        "instructions": "For pain relief"
+      }
+    ]
+  },
+  {
+    "id": "prescription-2",
+    "patientId": "patient-2",
+    "gpId": "gp-2",
+    "dateIssued": "2024-09-28",
+    "qrToken": "QR987654321",
+    "status": "active",
+    "pharmacyId": "pharmacy-1",
+    "pharmacyName": "Anytown Pharmacy",
+    "items": [
+      {
+        "name": "Lisinopril 10mg",
+        "dosage": "10mg once daily",
+        "quantity": 30,
+        "instructions": "Take in the morning"
+      }
+    ]
+  }
+]
