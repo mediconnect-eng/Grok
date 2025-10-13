@@ -1,0 +1,45 @@
+[
+  {
+    "id": "patient-1",
+    "role": "patient",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890",
+    "dateOfBirth": "1980-01-01",
+    "address": "123 Main St, Anytown, USA"
+  },
+  {
+    "id": "gp-1",
+    "role": "gp",
+    "name": "Dr. Sarah Johnson",
+    "email": "sarah.johnson@gp.example.com",
+    "phone": "+1234567891",
+    "specialty": "General Practice",
+    "clinic": "Anytown Medical Center"
+  },
+  {
+    "id": "specialist-1",
+    "role": "specialist",
+    "name": "Dr. Michael Chen",
+    "email": "michael.chen@specialist.example.com",
+    "phone": "+1234567892",
+    "specialty": "Cardiology",
+    "hospital": "City Hospital"
+  },
+  {
+    "id": "pharmacy-1",
+    "role": "pharmacy",
+    "name": "Anytown Pharmacy",
+    "email": "info@anytownpharmacy.com",
+    "phone": "+1234567893",
+    "address": "456 Pharmacy Ave, Anytown, USA"
+  },
+  {
+    "id": "diagnostics-1",
+    "role": "diagnostics",
+    "name": "Anytown Diagnostics Lab",
+    "email": "lab@anytowndiagnostics.com",
+    "phone": "+1234567894",
+    "address": "789 Lab St, Anytown, USA"
+  }
+]

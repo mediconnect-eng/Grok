@@ -1,0 +1,13 @@
+[
+  {
+    "id": "consult-1",
+    "patientId": "patient-1",
+    "specialistId": "specialist-1",
+    "gpId": "gp-1",
+    "dateRequested": "2024-10-01",
+    "status": "scheduled",
+    "specialty": "Cardiology",
+    "reason": "Chest pain evaluation",
+    "notes": "Patient reports intermittent chest pain. Referred for specialist evaluation."
+  }
+]

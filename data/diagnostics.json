@@ -1,0 +1,23 @@
+[
+  {
+    "id": "order-1",
+    "patientId": "patient-1",
+    "gpId": "gp-1",
+    "diagnosticsId": "diagnostics-1",
+    "dateOrdered": "2024-10-01",
+    "status": "pending",
+    "tests": [
+      {
+        "name": "Blood Test - Full Blood Count",
+        "code": "FBC",
+        "status": "pending"
+      },
+      {
+        "name": "X-Ray - Chest",
+        "code": "CXR",
+        "status": "pending"
+      }
+    ],
+    "results": []
+  }
+]
