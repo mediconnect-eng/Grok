@@ -72,10 +72,13 @@ DATABASE_URL=postgresql://your-copied-connection-string-here
 
 ### Step 4: Install PostgreSQL Driver (2 min)
 
+**IMPORTANT:** First navigate to your project folder!
+
 Run in PowerShell:
 
 ```powershell
-npm install pg @types/pg
+cd path\to\your\Mediconnect-Grok
+npm install pg @types/pgnpm install pg @types/pg
 ```
 
 ### Step 5: Update Auth Configuration (5 min)
