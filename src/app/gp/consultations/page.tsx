@@ -375,12 +375,27 @@ export default function GPConsultationsPage() {
                           Decline
                         </button>
                       </>
+                    ) : consultation.status === 'accepted' ? (
+                      <>
+                        <Link
+                          href={`/gp/consultations/${consultation.id}`}
+                          className="bg-primary-600 text-white px-6 py-2 rounded-button hover:bg-primary-700 transition font-semibold text-center whitespace-nowrap"
+                        >
+                          Start Consultation
+                        </Link>
+                        <Link
+                          href={`/gp/consultations/${consultation.id}/prescribe`}
+                          className="bg-purple-600 text-white px-6 py-2 rounded-button hover:bg-purple-700 transition font-semibold text-center whitespace-nowrap"
+                        >
+                          Prescribe
+                        </Link>
+                      </>
                     ) : (
                       <Link
                         href={`/gp/consultations/${consultation.id}`}
                         className="bg-primary-600 text-white px-6 py-2 rounded-button hover:bg-primary-700 transition font-semibold text-center whitespace-nowrap"
                       >
-                        View Consultation
+                        View Details
                       </Link>
                     )}
                   </div>
