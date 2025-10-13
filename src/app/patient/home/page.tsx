@@ -37,17 +37,8 @@ export default function PatientHome() {
   };
 
   const handleStartAIChat = () => {
-    if (session?.user) {
-      const patientName = session.user.name || 'Patient';
-      const patientId = session.user.id || session.user.email || patientName;
-      addGpRequest({
-        patientName,
-        patientId,
-        reason: 'Patient requested a GP consult from the care home page.'
-      });
-      alert('We sent your request to the GP team. You will see updates here when it is picked up.');
-    }
-    router.push('/patient/consult-waiting');
+    // Redirect to new consultation request page
+    router.push('/patient/consultations/request');
   };
 
   const handleAskQuestion = () => {
