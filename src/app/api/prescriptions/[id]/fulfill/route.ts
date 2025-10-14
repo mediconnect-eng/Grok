@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { logInfo, logError } from '@/lib/logger';
+import { notifyPrescriptionFilled } from '@/lib/notifications';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -81,38 +82,10 @@ export async function POST(
       prescriptionId
     ]);
 
-    // Create notification for patient based on status
-    let notificationMessage = '';
-    switch (status) {
-      case 'preparing':
-        notificationMessage = `${pharmacyName || 'Pharmacy'} is preparing your prescription.`;
-        break;
-      case 'ready':
-        notificationMessage = `Your prescription is ready for pickup at ${pharmacyName || 'the pharmacy'}!`;
-        break;
-      case 'delivered':
-        notificationMessage = `Your prescription has been delivered by ${pharmacyName || 'the pharmacy'}.`;
-        break;
-      case 'cancelled':
-        notificationMessage = `Your prescription has been cancelled. Please contact ${pharmacyName || 'the pharmacy'} for details.`;
-        break;
+    // Notify patient about prescription status update
+    if (status === 'ready' || status === 'delivered') {
+      await notifyPrescriptionFilled(prescription.patient_id, pharmacyName || 'Pharmacy', prescriptionId);
     }
-
-    const notificationId = crypto.randomUUID();
-    await client.query(
-      `INSERT INTO notifications (
-        id, user_id, type, title, message, link, read, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-      [
-        notificationId,
-        prescription.patient_id,
-        'prescription',
-        'Prescription Update',
-        notificationMessage,
-        `/patient/prescriptions/${prescriptionId}`,
-        false
-      ]
-    );
 
     await client.query('COMMIT');
 

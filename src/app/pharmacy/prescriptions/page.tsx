@@ -168,18 +168,27 @@ export default function PharmacyPrescriptionsPage() {
               <h1 className="text-3xl font-bold text-ink">Pharmacy Dashboard</h1>
               <p className="text-ink-light mt-1">{session.user.name || 'Pharmacy'}</p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm text-ink-light">Pending</div>
-                <div className="text-2xl font-bold text-yellow-600">{pendingCount}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-ink-light">Preparing</div>
-                <div className="text-2xl font-bold text-blue-600">{preparingCount}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-ink-light">Ready</div>
-                <div className="text-2xl font-bold text-green-600">{readyCount}</div>
+            <div className="flex items-center gap-6">
+              <Link
+                href="/pharmacy/scan-qr"
+                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium"
+              >
+                <span className="text-xl">📱</span>
+                Scan QR Code
+              </Link>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-sm text-ink-light">Pending</div>
+                  <div className="text-2xl font-bold text-yellow-600">{pendingCount}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-ink-light">Preparing</div>
+                  <div className="text-2xl font-bold text-blue-600">{preparingCount}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-ink-light">Ready</div>
+                  <div className="text-2xl font-bold text-green-600">{readyCount}</div>
+                </div>
               </div>
             </div>
           </div>

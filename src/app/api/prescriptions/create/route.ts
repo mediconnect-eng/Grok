@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { logInfo, logError } from '@/lib/logger';
+import { notifyPrescriptionCreated } from '@/lib/notifications';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -63,12 +64,14 @@ export async function POST(request: NextRequest) {
 
     await client.query('BEGIN');
 
-    // Create prescription record
+    // Create prescription record with QR token
     const prescriptionId = crypto.randomUUID();
+    const qrToken = `MCP-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    
     const prescriptionQuery = `
       INSERT INTO prescriptions (
         id, consultation_id, patient_id, provider_id, provider_name,
-        diagnosis, notes, status, pharmacy_id, created_at, updated_at
+        diagnosis, notes, status, qr_token, created_at, updated_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
       RETURNING *
     `;
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
       diagnosis || null,
       notes || null,
       'pending',
-      pharmacyId || null
+      qrToken
     ]);
 
     // Insert medications as JSON in notes or create separate items
@@ -95,41 +98,10 @@ export async function POST(request: NextRequest) {
       [`${notes || ''}\n\nMedications:\n${medicationsJson}`, prescriptionId]
     );
 
-    // Create notification for patient
-    const notificationId = crypto.randomUUID();
-    await client.query(
-      `INSERT INTO notifications (
-        id, user_id, type, title, message, link, read, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-      [
-        notificationId,
-        patientId,
-        'prescription',
-        'New Prescription',
-        `Dr. ${providerName} has prescribed ${medications.length} medication(s) for you.`,
-        `/patient/prescriptions/${prescriptionId}`,
-        false
-      ]
-    );
+    // Notify patient about new prescription
+    await notifyPrescriptionCreated(patientId, providerName, prescriptionId, medications.length);
 
-    // Create notification for pharmacy if specified
-    if (pharmacyId) {
-      const pharmacyNotificationId = crypto.randomUUID();
-      await client.query(
-        `INSERT INTO notifications (
-          id, user_id, type, title, message, link, read, created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-        [
-          pharmacyNotificationId,
-          pharmacyId,
-          'prescription',
-          'New Prescription to Fulfill',
-          `New prescription for patient. ${medications.length} medication(s).`,
-          `/pharmacy/prescriptions/${prescriptionId}`,
-          false
-        ]
-      );
-    }
+    // DO NOT create pharmacy notification yet - only when patient selects pharmacy
 
     // Update consultation status if needed
     await client.query(

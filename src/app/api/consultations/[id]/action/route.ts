@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import crypto from 'crypto';
 import { logInfo, logError } from '@/lib/logger';
+import { notifyConsultationAccepted, notifyConsultationCompleted } from '@/lib/notifications';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -90,22 +91,8 @@ export async function POST(
           [providerId, consultationId]
         );
 
-        // Create notification for patient
-        await client.query(
-          `INSERT INTO notifications (
-            id, user_id, title, message, type, entity_type, entity_id, created_at
-          )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-          [
-            crypto.randomUUID(),
-            consult.patient_id,
-            'Consultation Accepted',
-            `Dr. ${providerData.name} has accepted your consultation request. You can now start the consultation.`,
-            'consultation_accepted',
-            'consultation',
-            consultationId,
-          ]
-        );
+        // Notify patient about acceptance
+        await notifyConsultationAccepted(consult.patient_id, providerData.name, consultationId);
 
         logInfo('Consultation accepted:', {
           consultationId,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import crypto from 'crypto';
 import { logInfo, logError } from '@/lib/logger';
+import { createNotifications, notifyConsultationRequested } from '@/lib/notifications';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -98,24 +99,22 @@ export async function POST(request: NextRequest) {
         [providerType]
       );
 
-      // Create notifications for all available providers
-      for (const provider of availableProviders.rows) {
-        await client.query(
-          `INSERT INTO notifications (
-            id, user_id, title, message, type, entity_type, entity_id, created_at
-          )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-          [
-            crypto.randomUUID(),
-            provider.id,
-            'New Consultation Request',
-            `${patient.name} has requested a consultation for: ${chiefComplaint}`,
-            'consultation_request',
-            'consultation',
-            consultationId,
-          ]
-        );
-      }
+      // Notify patient that request was submitted
+      await notifyConsultationRequested(patientId, patient.name, consultationId);
+
+      // Notify all available providers about the consultation request
+      const providerNotifications = availableProviders.rows.map(provider => ({
+        userId: provider.id,
+        type: 'consultation' as const,
+        title: 'New Consultation Request',
+        message: `${patient.name} has requested a consultation for: ${chiefComplaint}`,
+        link: `/gp/consultations/${consultationId}`,
+        metadata: { consultationId, patientName: patient.name, chiefComplaint },
+        entityType: 'consultation' as const,
+        entityId: consultationId,
+      }));
+      
+      await createNotifications(providerNotifications);
 
       await client.query('COMMIT');
 

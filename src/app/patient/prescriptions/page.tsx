@@ -220,18 +220,34 @@ export default function PatientPrescriptions() {
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(prescription.status)}`}>
                             {getStatusText(prescription.status)}
                           </span>
+                          {!prescription.pharmacy_id && (
+                            <span className="px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+                              📋 Choose Pharmacy
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-ink-light">
                           {new Date(prescription.created_at).toLocaleDateString()} at{' '}
                           {new Date(prescription.created_at).toLocaleTimeString()}
                         </p>
                       </div>
-                      <Link
-                        href={`/patient/prescriptions/${prescription.id}`}
-                        className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-                      >
-                        View Details →
-                      </Link>
+                      <div className="flex flex-col items-end gap-2">
+                        {!prescription.pharmacy_id ? (
+                          <Link
+                            href={`/patient/prescriptions/${prescription.id}`}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium text-sm"
+                          >
+                            Choose Pharmacy
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/patient/prescriptions/${prescription.id}`}
+                            className="text-primary-600 hover:text-primary-700 font-medium text-sm"
+                          >
+                            View Details →
+                          </Link>
+                        )}
+                      </div>
                     </div>
 
                     {prescription.diagnosis && (

@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession } from '@/lib/auth-client';
+import NotificationBell from './NotificationBell';
 
 export default function Header() {
+  const { data: session } = useSession();
   return (
     <header className="bg-white border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,6 +32,8 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Show notification bell if user is logged in */}
+            {session?.user && <NotificationBell userId={session.user.id} />}
             <Link href="/contact" className="text-sm text-body hover:text-primary-600 transition-colors">Contact</Link>
             <Link href="/privacy" className="text-sm text-body hover:text-primary-600 transition-colors">Privacy</Link>
           </div>
