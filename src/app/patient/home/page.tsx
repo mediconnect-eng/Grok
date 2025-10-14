@@ -284,6 +284,28 @@ export default function PatientHome() {
             </button>
           </div>
 
+          {/* Secondary Actions */}
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <button
+              onClick={() => router.push('/patient/profile')}
+              className="flex items-center gap-3 rounded-button bg-white px-4 py-3 shadow-card transition hover:bg-primary-50"
+            >
+              <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span className="text-sm font-medium text-primary-800">My Profile</span>
+            </button>
+            <button
+              onClick={() => router.push('/patient/history')}
+              className="flex items-center gap-3 rounded-button bg-white px-4 py-3 shadow-card transition hover:bg-primary-50"
+            >
+              <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-medium text-primary-800">Medical History</span>
+            </button>
+          </div>
+
           <div className="mt-6 rounded-card bg-white p-6 shadow-card">
             <div className="flex items-center justify-between">
               <div>

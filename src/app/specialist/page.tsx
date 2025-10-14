@@ -82,6 +82,20 @@ export default function SpecialistDashboard() {
               Review GP referrals, coordinate diagnostics, and manage post-consult follow ups. Data stays empty until
               you seed the environment.
             </p>
+            <div className="mt-4 flex gap-3">
+              <Link
+                href="/specialist/consultations"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium"
+              >
+                📋 My Consultations
+              </Link>
+              <Link
+                href="/specialist/referrals"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+              >
+                🏥 Referrals
+              </Link>
+            </div>
           </div>
 
           <nav className="mb-6 flex gap-6 border-b border-gray-200 text-sm">
