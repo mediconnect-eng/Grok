@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { logError } from '@/lib/logger';
+import { requireAuth } from '@/lib/auth-middleware';
+import { checkRateLimit, RateLimitPresets } from '@/lib/rate-limiter';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -11,6 +13,21 @@ const pool = new Pool({
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimitResult = checkRateLimit(request, RateLimitPresets.API);
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response!;
+    }
+
+    // Authentication - require admin role
+    const authResult = await requireAuth(request, {
+      requireAuth: true,
+      requiredRoles: ['admin'],
+    });
+
+    if (!authResult.success) {
+      return authResult.response!;
+    }
     const client = await pool.connect();
 
     try {

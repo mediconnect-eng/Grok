@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { AdminGuard } from '@/components/AdminGuard';
 
 interface Application {
   id: string;
@@ -106,24 +107,25 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-ink">Admin Dashboard</h1>
-              <p className="text-ink-light mt-1">Manage provider and partner applications</p>
+    <AdminGuard>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white shadow">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-ink">Admin Dashboard</h1>
+                <p className="text-ink-light mt-1">Manage provider and partner applications</p>
+              </div>
+              <button
+                onClick={fetchApplications}
+                className="px-4 py-2 bg-primary-600 text-white rounded-button hover:bg-primary-700 transition"
+              >
+                🔄 Refresh
+              </button>
             </div>
-            <button
-              onClick={fetchApplications}
-              className="px-4 py-2 bg-primary-600 text-white rounded-button hover:bg-primary-700 transition"
-            >
-              🔄 Refresh
-            </button>
           </div>
         </div>
-      </div>
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -320,6 +322,7 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </AdminGuard>
   );
 }

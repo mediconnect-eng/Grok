@@ -3,6 +3,9 @@ import { Pool } from 'pg';
 import crypto from 'crypto';
 import { logInfo, logError } from '@/lib/logger';
 import { createNotifications, notifyConsultationRequested } from '@/lib/notifications';
+import { requireAuth, requireOwnership } from '@/lib/auth-middleware';
+import { checkRateLimit, RateLimitPresets } from '@/lib/rate-limiter';
+import { validateBody, validateQuery, CreateConsultationSchema, GetConsultationsSchema } from '@/lib/validation';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -13,7 +16,37 @@ const pool = new Pool({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Step 1: Rate limiting
+    const rateLimitResult = checkRateLimit(request, RateLimitPresets.API);
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response!;
+    }
+
+    // Step 2: Authentication
+    const authResult = await requireAuth(request, {
+      requireAuth: true,
+      requiredRoles: ['patient'],
+    });
+
+    if (!authResult.success) {
+      return authResult.response!;
+    }
+
+    const session = authResult.session!;
+
+    // Step 3: Input validation
+    const validationResult = await validateBody(request, CreateConsultationSchema);
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: validationResult.error,
+          code: 'VALIDATION_ERROR',
+        },
+        { status: 400 }
+      );
+    }
+
     const {
       patientId,
       providerType,
@@ -23,20 +56,16 @@ export async function POST(request: NextRequest) {
       urgency,
       preferredDate,
       attachments,
-    } = body;
+    } = validationResult.data;
 
-    // Validation
-    if (!patientId || !providerType || !chiefComplaint) {
+    // Step 4: Authorization - verify user owns the resource
+    if (session.user.id !== patientId) {
       return NextResponse.json(
-        { error: 'Patient ID, provider type, and chief complaint are required' },
-        { status: 400 }
-      );
-    }
-
-    if (!['gp', 'specialist'].includes(providerType)) {
-      return NextResponse.json(
-        { error: 'Provider type must be either "gp" or "specialist"' },
-        { status: 400 }
+        { 
+          error: 'You can only create consultations for yourself',
+          code: 'AUTHORIZATION_FAILED',
+        },
+        { status: 403 }
       );
     }
 
@@ -145,8 +174,12 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     logError('Create consultation error:', error);
     
+    // Sanitized error for production
     return NextResponse.json(
-      { error: error.message || 'Failed to create consultation request' },
+      { 
+        error: 'Failed to create consultation request',
+        code: 'INTERNAL_ERROR',
+      },
       { status: 500 }
     );
   }
@@ -155,13 +188,48 @@ export async function POST(request: NextRequest) {
 // GET - Fetch consultations for a patient
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const patientId = searchParams.get('patientId');
+    // Step 1: Rate limiting
+    const rateLimitResult = checkRateLimit(request, RateLimitPresets.API);
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response!;
+    }
 
-    if (!patientId) {
+    // Step 2: Authentication
+    const authResult = await requireAuth(request, {
+      requireAuth: true,
+      requiredRoles: ['patient'],
+    });
+
+    if (!authResult.success) {
+      return authResult.response!;
+    }
+
+    const session = authResult.session!;
+
+    // Step 3: Validate query parameters
+    const searchParams = request.nextUrl.searchParams;
+    const validationResult = validateQuery(searchParams, GetConsultationsSchema);
+
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Patient ID is required' },
+        { 
+          error: validationResult.error,
+          code: 'VALIDATION_ERROR',
+        },
         { status: 400 }
+      );
+    }
+
+    const { userId: patientId } = validationResult.data;
+
+    // Step 4: Authorization - verify user owns the resource
+    if (session.user.id !== patientId) {
+      return NextResponse.json(
+        { 
+          error: 'You can only view your own consultations',
+          code: 'AUTHORIZATION_FAILED',
+        },
+        { status: 403 }
       );
     }
 
@@ -195,8 +263,12 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     logError('Fetch consultations error:', error);
     
+    // Sanitized error for production
     return NextResponse.json(
-      { error: 'Failed to fetch consultations' },
+      { 
+        error: 'Failed to fetch consultations',
+        code: 'INTERNAL_ERROR',
+      },
       { status: 500 }
     );
   }
