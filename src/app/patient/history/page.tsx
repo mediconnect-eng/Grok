@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
 import Link from 'next/link';
+import Pagination, { usePagination } from '@/components/Pagination';
 
 interface HistoryItem {
   id: string;
@@ -191,6 +192,9 @@ export default function PatientHistoryPage() {
     return true;
   });
 
+  // Apply pagination to filtered results
+  const { currentPage, totalPages, currentItems, setCurrentPage } = usePagination(filteredHistory, 10);
+
   const getDetailLink = (item: HistoryItem) => {
     switch (item.type) {
       case 'consultation':
@@ -304,7 +308,7 @@ export default function PatientHistoryPage() {
 
             {/* Timeline items */}
             <div className="space-y-6">
-              {filteredHistory.map((item, index) => (
+              {currentItems.map((item, index) => (
                 <div key={item.id} className="relative pl-20">
                   {/* Timeline dot */}
                   <div className="absolute left-6 top-6 w-4 h-4 bg-white border-4 border-primary-600 rounded-full"></div>
@@ -359,6 +363,20 @@ export default function PatientHistoryPage() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  itemsPerPage={10}
+                  totalItems={filteredHistory.length}
+                  showItemsInfo
+                />
+              </div>
+            )}
           </div>
         )}
 

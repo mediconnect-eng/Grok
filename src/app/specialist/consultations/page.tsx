@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
 import Link from 'next/link';
+import Pagination, { usePagination } from '@/components/Pagination';
 
 interface Consultation {
   id: string;
@@ -63,6 +64,9 @@ export default function SpecialistConsultationsPage() {
     if (filter === 'completed') return c.status === 'completed';
     return true;
   });
+
+  // Apply pagination to filtered consultations
+  const { currentPage, totalPages, currentItems, setCurrentPage } = usePagination(filteredConsultations, 10);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -149,7 +153,7 @@ export default function SpecialistConsultationsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredConsultations.map((consultation) => (
+            {currentItems.map((consultation) => (
               <Link
                 key={consultation.id}
                 href={`/specialist/consultations/${consultation.id}`}
@@ -207,6 +211,20 @@ export default function SpecialistConsultationsPage() {
                 </div>
               </Link>
             ))}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  itemsPerPage={10}
+                  totalItems={filteredConsultations.length}
+                  showItemsInfo
+                />
+              </div>
+            )}
           </div>
         )}
       </main>
