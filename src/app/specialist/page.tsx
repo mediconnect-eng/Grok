@@ -5,12 +5,17 @@ import AuthGuard from '@/components/AuthGuard';
 import Link from 'next/link';
 import { useSharedState } from '@/lib/use-shared-state';
 import { SharedPrescription, Referral } from '@/lib/shared-state';
+import Calendar, { CalendarEvent, UpcomingEvents } from '@/components/Calendar';
+import { useRouter } from 'next/navigation';
 
 export default function SpecialistDashboard() {
   const sharedState = useSharedState();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'referrals' | 'diagnostics' | 'procedures'>('referrals');
   const [selectedReferralId, setSelectedReferralId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const previousReferralCount = useRef(0);
 
   const referrals = sharedState.referrals;
@@ -35,6 +40,49 @@ export default function SpecialistDashboard() {
     previousReferralCount.current = count;
   }, [referrals.length]);
 
+  // Fetch calendar events (consultations from specialist perspective)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoadingEvents(true);
+      try {
+        const events: CalendarEvent[] = [];
+
+        // Fetch consultations where this specialist is the provider
+        const consultationsRes = await fetch('/api/consultations/provider');
+        if (consultationsRes.ok) {
+          const consultations = await consultationsRes.json();
+          // Only show accepted and in-progress consultations
+          consultations
+            .filter((c: any) => c.status === 'accepted' || c.status === 'in_progress')
+            .forEach((consultation: any) => {
+              const eventDate = consultation.preferred_date 
+                ? new Date(consultation.preferred_date)
+                : new Date(consultation.created_at);
+              
+              events.push({
+                id: consultation.id,
+                title: `Consultation with ${consultation.patient_name || 'Patient'}`,
+                date: eventDate,
+                time: consultation.preferred_time,
+                type: 'consultation',
+                status: consultation.status,
+                description: consultation.chief_complaint,
+                provider: consultation.patient_name,
+              });
+            });
+        }
+
+        setCalendarEvents(events);
+      } catch (error) {
+        console.error('Error fetching calendar events:', error);
+      } finally {
+        setIsLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   const selectedReferral: Referral | undefined = useMemo(
     () => referrals.find((referral) => referral.id === selectedReferralId) || referrals[0],
     [referrals, selectedReferralId]
@@ -47,6 +95,16 @@ export default function SpecialistDashboard() {
     if (!sharedState.activePrescriptionId) return undefined;
     return sharedState.prescriptions.find((p) => p.id === sharedState.activePrescriptionId);
   }, [sharedState.activePrescriptionId, sharedState.prescriptions]);
+
+  const handleEventClick = (event: CalendarEvent) => {
+    // Navigate to consultation detail page
+    router.push(`/specialist/consultations/${event.id}`);
+  };
+
+  const handleDateClick = (date: Date) => {
+    // Could be used for scheduling new consultations in the future
+    console.log('Date clicked:', date);
+  };
 
   return (
     <AuthGuard role="specialist">
@@ -95,6 +153,46 @@ export default function SpecialistDashboard() {
               >
                 🏥 Referrals
               </Link>
+            </div>
+          </div>
+
+          {/* Calendar Section */}
+          <div className="mb-8 grid gap-6 lg:grid-cols-3">
+            {/* Calendar - takes 2 columns on large screens */}
+            <div className="lg:col-span-2">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Schedule</h2>
+                {isLoadingEvents ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <Calendar 
+                    events={calendarEvents} 
+                    onEventClick={handleEventClick}
+                    onDateClick={handleDateClick}
+                    highlightToday
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Upcoming Events - takes 1 column on large screens */}
+            <div className="lg:col-span-1">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Consultations</h2>
+                {isLoadingEvents ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <UpcomingEvents 
+                    events={calendarEvents}
+                    onEventClick={handleEventClick}
+                    maxEvents={5}
+                  />
+                )}
+              </div>
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import ComingSoon from '@/components/ComingSoon';
 import { FEATURE_FLAGS } from '@/lib/feature-flags';
 import { addGpRequest } from '@/lib/shared-state';
 import { useSharedState } from '@/lib/use-shared-state';
+import Calendar, { CalendarEvent, UpcomingEvents } from '@/components/Calendar';
 import {
   StethoscopeIcon,
   CapsuleIcon,
@@ -22,6 +23,8 @@ const tabs = ['Specialists', 'Pharmacy', 'Care', 'Diagnostics', 'Profile'];
 export default function PatientHome() {
   const [activeTab, setActiveTab] = useState('Specialists');
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const sharedState = useSharedState();
@@ -67,6 +70,29 @@ export default function PatientHome() {
     router.push('/patient/consult-waiting');
   };
 
+  const handleEventClick = (event: CalendarEvent) => {
+    // Navigate to appropriate page based on event type
+    switch (event.type) {
+      case 'consultation':
+        router.push(`/patient/consultations/${event.id}`);
+        break;
+      case 'prescription':
+        router.push(`/patient/prescriptions`);
+        break;
+      case 'diagnostic':
+        router.push(`/patient/diagnostics`);
+        break;
+      case 'referral':
+        router.push(`/patient/specialists`);
+        break;
+    }
+  };
+
+  const handleDateClick = (date: Date) => {
+    // Navigate to consultation request page with date pre-filled
+    router.push(`/patient/consultations/request?date=${date.toISOString()}`);
+  };
+
   // Load user profile with dependents
   useEffect(() => {
     if (session?.user?.email) {
@@ -75,6 +101,91 @@ export default function PatientHome() {
         setUserProfile(JSON.parse(savedProfile));
       }
     }
+  }, [session]);
+
+  // Fetch calendar events (consultations, prescriptions, diagnostics)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!session?.user) return;
+
+      setIsLoadingEvents(true);
+      try {
+        const events: CalendarEvent[] = [];
+
+        // Fetch consultations
+        const consultationsRes = await fetch('/api/consultations/patient');
+        if (consultationsRes.ok) {
+          const consultations = await consultationsRes.json();
+          consultations.forEach((consultation: any) => {
+            const eventDate = consultation.preferred_date 
+              ? new Date(consultation.preferred_date)
+              : new Date(consultation.created_at);
+            
+            events.push({
+              id: consultation.id,
+              title: `Consultation with ${consultation.doctor_name || 'Doctor'}`,
+              date: eventDate,
+              time: consultation.preferred_time,
+              type: 'consultation',
+              status: consultation.status,
+              description: consultation.chief_complaint,
+              provider: consultation.doctor_name,
+            });
+          });
+        }
+
+        // Fetch prescriptions
+        const prescriptionsRes = await fetch('/api/prescriptions');
+        if (prescriptionsRes.ok) {
+          const prescriptions = await prescriptionsRes.json();
+          prescriptions.forEach((prescription: any) => {
+            // Add pickup date if available
+            if (prescription.pickup_date) {
+              events.push({
+                id: prescription.id,
+                title: `Pick up prescription`,
+                date: new Date(prescription.pickup_date),
+                time: '09:00 AM',
+                type: 'prescription',
+                status: prescription.status,
+                description: `${prescription.medications?.length || 0} medication(s)`,
+                provider: prescription.pharmacy_name,
+              });
+            }
+          });
+        }
+
+        // Fetch diagnostic orders
+        const diagnosticsRes = await fetch('/api/diagnostic-orders/patient');
+        if (diagnosticsRes.ok) {
+          const diagnostics = await diagnosticsRes.json();
+          diagnostics.forEach((diagnostic: any) => {
+            const eventDate = diagnostic.scheduled_date 
+              ? new Date(diagnostic.scheduled_date)
+              : new Date(diagnostic.created_at);
+            
+            events.push({
+              id: diagnostic.id,
+              title: `${diagnostic.test_types?.join(', ') || 'Diagnostic test'}`,
+              date: eventDate,
+              time: diagnostic.scheduled_time,
+              type: 'diagnostic',
+              status: diagnostic.status,
+              description: 'Diagnostic tests',
+              provider: diagnostic.diagnostic_center_name,
+            });
+          });
+        }
+
+        setCalendarEvents(events);
+      } catch (error) {
+        console.error('Error fetching calendar events:', error);
+      } finally {
+        setIsLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
   }, [session]);
 
   // Show loading state while checking session
@@ -304,6 +415,46 @@ export default function PatientHome() {
               </svg>
               <span className="text-sm font-medium text-primary-800">Medical History</span>
             </button>
+          </div>
+
+          {/* Calendar Section */}
+          <div className="mt-6 grid gap-6 lg:grid-cols-3">
+            {/* Calendar - takes 2 columns on large screens */}
+            <div className="lg:col-span-2">
+              <div className="rounded-card bg-white p-6 shadow-card">
+                <h3 className="text-lg font-semibold text-primary-800 mb-4">Your Appointments</h3>
+                {isLoadingEvents ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                  </div>
+                ) : (
+                  <Calendar 
+                    events={calendarEvents} 
+                    onEventClick={handleEventClick}
+                    onDateClick={handleDateClick}
+                    highlightToday
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Upcoming Events - takes 1 column on large screens */}
+            <div className="lg:col-span-1">
+              <div className="rounded-card bg-white p-6 shadow-card">
+                <h3 className="text-lg font-semibold text-primary-800 mb-4">Upcoming</h3>
+                {isLoadingEvents ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  </div>
+                ) : (
+                  <UpcomingEvents 
+                    events={calendarEvents}
+                    onEventClick={handleEventClick}
+                    maxEvents={5}
+                  />
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="mt-6 rounded-card bg-white p-6 shadow-card">
