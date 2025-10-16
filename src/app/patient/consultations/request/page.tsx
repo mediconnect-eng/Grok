@@ -10,12 +10,10 @@ export default function RequestConsultationPage() {
   const { data: session } = useSession();
   
   const [formData, setFormData] = useState({
-    providerType: 'gp',
     chiefComplaint: '',
     symptoms: '',
     duration: '',
     urgency: 'routine',
-    preferredDate: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,13 +60,13 @@ export default function RequestConsultationPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          patientId: session.user.id,
-          providerType: formData.providerType,
-          chiefComplaint: formData.chiefComplaint,
-          symptoms: formData.symptoms || null,
-          duration: formData.duration || null,
+          patientId: String(session.user.id), // Ensure it's a string
+          providerType: 'gp', // Always GP - they will refer to specialist if needed
+          chiefComplaint: formData.chiefComplaint.trim(),
+          symptoms: formData.symptoms.trim() || null,
+          duration: formData.duration.trim() || null,
           urgency: formData.urgency,
-          preferredDate: formData.preferredDate || null,
+          preferredDate: null, // Remove date selection for now
         }),
       });
 
@@ -115,10 +113,10 @@ export default function RequestConsultationPage() {
           </div>
           <h1 className="text-2xl font-bold text-ink mb-2">Request Submitted!</h1>
           <p className="text-ink-light mb-4">
-            Your consultation request has been sent to available {formData.providerType === 'gp' ? 'general practitioners' : 'specialists'}.
+            Your consultation request has been sent to available General Practitioners.
           </p>
           <p className="text-sm text-ink-light mb-6">
-            You'll receive a notification when a doctor accepts your request.
+            You'll receive a notification when a GP accepts your request.
           </p>
           <p className="text-sm text-ink-light">
             Redirecting to your consultations...
@@ -139,8 +137,23 @@ export default function RequestConsultationPage() {
             </svg>
             Back to Home
           </Link>
-          <h1 className="text-3xl font-bold text-ink">Request Consultation</h1>
-          <p className="text-ink-light mt-2">Tell us about your health concern and we'll connect you with a healthcare provider</p>
+          <h1 className="text-3xl font-bold text-ink">Request GP Consultation</h1>
+          <p className="text-ink-light mt-2">Tell us about your health concern and we'll connect you with a General Practitioner</p>
+        </div>
+
+        {/* Info Box - GP First Approach */}
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-button p-4">
+          <div className="flex">
+            <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-1">Why start with a GP?</h3>
+              <p className="text-sm text-blue-800">
+                All patients begin with a General Practitioner (GP) consultation. Your GP will assess your condition and, if needed, provide a referral to see a specialist. This ensures you receive the most appropriate care.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Form */}
@@ -151,45 +164,6 @@ export default function RequestConsultationPage() {
                 {submitError}
               </div>
             )}
-
-            {/* Provider Type */}
-            <div>
-              <label className="block text-sm font-medium text-ink mb-3">
-                Who would you like to consult with? <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, providerType: 'gp' })}
-                  className={`p-4 border-2 rounded-button transition ${
-                    formData.providerType === 'gp'
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-300 hover:border-primary-400'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-3xl mb-2">🩺</div>
-                    <div className="font-semibold text-ink">General Practitioner</div>
-                    <div className="text-sm text-ink-light mt-2">For general health concerns, prescriptions, and referrals</div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, providerType: 'specialist' })}
-                  className={`p-4 border-2 rounded-button transition ${
-                    formData.providerType === 'specialist'
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-300 hover:border-primary-400'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-3xl mb-2">👨‍⚕️</div>
-                    <div className="font-semibold text-ink">Specialist</div>
-                    <div className="text-sm text-ink-light mt-2">For specialized medical care and follow-ups</div>
-                  </div>
-                </button>
-              </div>
-            </div>
 
             {/* Chief Complaint */}
             <div>
@@ -263,20 +237,6 @@ export default function RequestConsultationPage() {
               )}
             </div>
 
-            {/* Preferred Date */}
-            <div>
-              <label htmlFor="preferredDate" className="block text-sm font-medium text-ink mb-2">
-                Preferred Consultation Date/Time (Optional)
-              </label>
-              <input
-                type="datetime-local"
-                id="preferredDate"
-                value={formData.preferredDate}
-                onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-
             {/* Submit Button */}
             <div className="flex gap-4 pt-4">
               <button
@@ -297,18 +257,19 @@ export default function RequestConsultationPage() {
         </div>
 
         {/* Info Box */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-button p-4">
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-button p-4">
           <div className="flex">
-            <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <div>
-              <h3 className="text-sm font-semibold text-blue-900 mb-1">What happens next?</h3>
-              <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                <li>Your request is sent to available doctors</li>
-                <li>A doctor reviews and accepts your request</li>
+              <h3 className="text-sm font-semibold text-green-900 mb-1">What happens next?</h3>
+              <ol className="text-sm text-green-800 space-y-2 list-decimal list-inside">
+                <li>Your request is sent to available GPs</li>
+                <li>A GP reviews and accepts your request</li>
                 <li>You'll receive a notification when accepted</li>
-                <li>Start your consultation via chat or video</li>
+                <li>Consult with your GP via chat or video call</li>
+                <li>If needed, your GP will provide a specialist referral</li>
               </ol>
             </div>
           </div>
