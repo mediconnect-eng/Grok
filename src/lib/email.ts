@@ -432,7 +432,7 @@ export async function sendPasswordResetEmail(
   });
 }
 
-export default {
+const emailService = {
   sendVerificationEmail,
   sendEmailVerifiedConfirmation,
   sendProviderApplicationReceived,
@@ -440,3 +440,5 @@ export default {
   sendProviderApplicationRejected,
   sendPasswordResetEmail,
 };
+
+export default emailService;

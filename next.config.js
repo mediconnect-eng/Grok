@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
+const resolvedPublicUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
+const resolvedBetterAuthUrl =
+  process.env.NEXT_PUBLIC_BETTER_AUTH_URL || resolvedPublicUrl;
+
 const nextConfig = {
   // Vercel deployment optimization
   output: 'standalone',
@@ -84,7 +91,8 @@ const nextConfig = {
   
   // Environment validation
   env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_APP_URL: resolvedPublicUrl,
+    NEXT_PUBLIC_BETTER_AUTH_URL: resolvedBetterAuthUrl,
   },
 };
 

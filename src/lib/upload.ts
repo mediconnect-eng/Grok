@@ -191,7 +191,7 @@ export function getFileInfo(url: string): {
   }
 }
 
-export default {
+const uploadService = {
   uploadFile,
   uploadLicenseDocument,
   uploadMedicalDocument,
@@ -199,3 +199,5 @@ export default {
   validateFile,
   getFileInfo,
 };
+
+export default uploadService;

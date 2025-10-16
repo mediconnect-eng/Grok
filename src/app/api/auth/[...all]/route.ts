@@ -13,41 +13,54 @@ function withRateLimit(handler: Function) {
   return async (req: NextRequest) => {
     const startTime = Date.now();
     const identifier = getClientIdentifier(req);
+    const pathname = req.nextUrl.pathname;
     
-    // Apply rate limiting to auth endpoints
-    const rateLimitResult = checkRateLimit(identifier, RateLimits.AUTH);
+    // Skip rate limiting for OAuth callbacks
+    const isOAuthCallback = pathname.includes('/callback/');
+    
+    if (!isOAuthCallback) {
+      // Apply rate limiting to auth endpoints
+      const rateLimitResult = checkRateLimit(identifier, RateLimits.AUTH);
 
-    if (!rateLimitResult.allowed) {
-      const resetDate = new Date(rateLimitResult.resetTime);
-      
-      logger.warn('Rate limit exceeded', {
-        identifier,
-        path: req.nextUrl.pathname,
-        method: req.method,
-      });
-      
-      return NextResponse.json(
-        {
-          error: 'Too many attempts. Please try again later.',
-          resetTime: resetDate.toISOString(),
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
-            'X-RateLimit-Limit': RateLimits.AUTH.maxRequests.toString(),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+      if (!rateLimitResult.allowed) {
+        const resetDate = new Date(rateLimitResult.resetTime);
+        
+        logger.warn('Rate limit exceeded', {
+          identifier,
+          path: pathname,
+          method: req.method,
+        });
+        
+        return NextResponse.json(
+          {
+            error: 'Too many attempts. Please try again later.',
+            resetTime: resetDate.toISOString(),
           },
-        }
-      );
+          {
+            status: 429,
+            headers: {
+              'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
+              'X-RateLimit-Limit': RateLimits.AUTH.maxRequests.toString(),
+              'X-RateLimit-Remaining': '0',
+              'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+            },
+          }
+        );
+      }
     }
 
     // Execute handler and add rate limit headers
     try {
+      logger.info('Auth request', {
+        path: pathname,
+        method: req.method,
+        isCallback: isOAuthCallback,
+      });
+      
       const response = await handler(req);
       
-      if (response instanceof NextResponse) {
+      if (response instanceof NextResponse && !isOAuthCallback) {
+        const rateLimitResult = checkRateLimit(identifier, RateLimits.AUTH);
         response.headers.set('X-RateLimit-Limit', RateLimits.AUTH.maxRequests.toString());
         response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
         response.headers.set('X-RateLimit-Reset', rateLimitResult.resetTime.toString());
@@ -55,13 +68,14 @@ function withRateLimit(handler: Function) {
 
       // Log successful auth requests
       const duration = Date.now() - startTime;
-      logger.request(req.method, req.nextUrl.pathname, response.status, duration);
+      logger.request(req.method, pathname, response?.status || 200, duration);
 
       return response;
     } catch (error) {
       logger.error('Auth handler error', error, {
-        path: req.nextUrl.pathname,
+        path: pathname,
         method: req.method,
+        isCallback: isOAuthCallback,
       });
       throw error;
     }
