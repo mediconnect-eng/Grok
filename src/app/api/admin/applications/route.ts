@@ -4,6 +4,8 @@ import { logError } from '@/lib/logger';
 import { requireAuth } from '@/lib/auth-middleware';
 import { checkRateLimit, RateLimitPresets } from '@/lib/rate-limiter';
 
+export const dynamic = 'force-dynamic';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {

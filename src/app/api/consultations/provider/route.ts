@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import { logError } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
