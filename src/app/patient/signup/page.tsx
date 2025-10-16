@@ -51,28 +51,9 @@ export default function PatientSignup() {
       if (result.error) {
         setError(result.error.message || 'Signup failed. Please try again.');
       } else {
-        // Signup successful - now auto-login the user
-        console.log('Signup successful, logging in...');
-        
-        const loginResult = await signIn.email({
-          email: formData.email.trim(),
-          password: formData.password,
-        });
-
-        if (loginResult.error) {
-          // Signup succeeded but auto-login failed - redirect to login page
-          console.error('Auto-login failed:', loginResult.error);
-          setError('Account created! Please log in with your credentials.');
-          setTimeout(() => router.push('/patient/login'), 2000);
-        } else {
-          // Both signup and login successful - redirect to home
-          console.log('Auto-login successful, redirecting to home...');
-          
-          // Give session cookie time to set
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          router.push('/patient/home');
-        }
+        // Signup successful - redirect with success message
+        console.log('Signup successful, redirecting to login...');
+        router.push('/patient/login?new=true');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');

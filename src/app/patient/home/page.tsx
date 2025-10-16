@@ -93,7 +93,7 @@ export default function PatientHome() {
     router.push(`/patient/consultations/request?date=${date.toISOString()}`);
   };
 
-  // Load user profile with dependents
+  // Load user profile and check session
   useEffect(() => {
     // Don't do anything while session is still loading
     if (isPending) {
@@ -103,7 +103,7 @@ export default function PatientHome() {
     // If session loaded and no user, redirect to login
     if (!session?.user) {
       console.log('No session found, redirecting to login...');
-      router.push('/patient/login');
+      window.location.href = '/patient/login';
       return;
     }
     
@@ -114,7 +114,7 @@ export default function PatientHome() {
         setUserProfile(JSON.parse(savedProfile));
       }
     }
-  }, [session, isPending, router]);
+  }, [session, isPending]);
   
   // Show loading state while checking session
   if (isPending) {
@@ -217,24 +217,6 @@ export default function PatientHome() {
 
     fetchEvents();
   }, [session]);
-
-  // Show loading state while checking session
-  if (isPending) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect to login if not authenticated
-  if (!session) {
-    router.push('/patient/login');
-    return null;
-  }
 
   const userName = session.user.name || 'User';
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();

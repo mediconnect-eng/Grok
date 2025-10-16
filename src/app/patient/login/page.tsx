@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from '@/lib/auth-client';
 
 export default function PatientLogin() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (searchParams?.get('new') === 'true') {
+      setSuccessMessage('Account created successfully! Please log in.');
+    }
+  }, [searchParams]);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -44,14 +52,9 @@ export default function PatientLogin() {
         
         console.error('Login error:', result.error);
       } else {
-        // Login successful
+        // Login successful - force page reload to ensure session is loaded
         console.log('Login successful, redirecting...');
-        
-        // Give session cookie time to set
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Redirect to patient home
-        router.push('/patient/home');
+        window.location.href = '/patient/home';
       }
     } catch (err: any) {
       setError('An unexpected error occurred. Please try again.');
@@ -158,6 +161,17 @@ export default function PatientLogin() {
               required
             />
           </div>
+
+          {successMessage && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm text-green-600">{successMessage}</p>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">

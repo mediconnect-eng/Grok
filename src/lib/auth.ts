@@ -42,6 +42,10 @@ if (googleClientId && googleClientSecret) {
 export const auth = betterAuth({
   database: pool,
   secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  trustedOrigins: process.env.NODE_ENV === 'production' 
+    ? ['https://healthhubinternational.com', 'https://www.healthhubinternational.com']
+    : ['http://localhost:3000'],
   
   emailAndPassword: {
     enabled: true,
@@ -50,16 +54,16 @@ export const auth = betterAuth({
   },
   
   session: {
-    // Session expires after 7 days of inactivity
-    expiresIn: 60 * 60 * 24 * 7, // 7 days in seconds
+    // Session expires after 30 days of inactivity
+    expiresIn: 60 * 60 * 24 * 30, // 30 days in seconds
     
-    // Update session activity every 24 hours
-    updateAge: 60 * 60 * 24, // 24 hours in seconds
+    // Update session activity every 1 hour
+    updateAge: 60 * 60, // 1 hour in seconds
     
     // Cookie configuration
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 30, // 30 days
     },
   },
   
@@ -68,9 +72,14 @@ export const auth = betterAuth({
     // Use secure cookies in production
     useSecureCookies: process.env.NODE_ENV === 'production',
     
+    // Cookie domain for production
+    cookieDomain: process.env.NODE_ENV === 'production' 
+      ? '.healthhubinternational.com' 
+      : undefined,
+    
     // Cross-site request forgery protection
     crossSubDomainCookies: {
-      enabled: false,
+      enabled: true,
     },
     
     // Generate new session ID on login
