@@ -11,6 +11,9 @@ import {
   QRIcon,
   LockIcon,
   MapPinIcon,
+  HeartPulseIcon,
+  UsersIcon,
+  ClipboardIcon,
 } from '@/components/BrandIcons';
 
 const partnerLinks = [
@@ -44,12 +47,12 @@ const heroHighlights = [
   {
     title: 'Orchestrated care plans',
     copy: 'Keep every stakeholder aligned with shared consult timelines, notes, and tasks.',
-    Icon: VideoCallIcon,
+    Icon: ClipboardIcon,
   },
   {
     title: 'Partner-specific workspaces',
     copy: 'GPs, specialists, diagnostics, and pharmacy teams see tailored tools for their role.',
-    Icon: BadgeIcon,
+    Icon: UsersIcon,
   },
   {
     title: 'Security at the core',
@@ -108,54 +111,81 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-primary-950 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-primary-950 via-primary-900 to-primary-950 text-white">
+      {/* Navigation */}
+      <nav className="relative z-50 border-b border-white/10 bg-primary-950/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-400 to-secondary-500 shadow-lg">
+              <HeartPulseIcon className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight">HealthHub</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/patient/login"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10 hover:text-white"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/patient/signup"
+              className="rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:brightness-110"
+            >
+              Get started
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       <header className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-primary-500/20 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-[360px] w-[360px] translate-x-1/3 translate-y-1/3 rounded-full bg-secondary-500/20 blur-3xl" />
+          <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary-500/20 blur-3xl" />
+          <div className="absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-secondary-500/20 blur-3xl" />
+          <div className="absolute left-0 top-1/2 h-[300px] w-[300px] -translate-x-1/3 -translate-y-1/2 rounded-full bg-primary-400/10 blur-3xl" />
         </div>
-        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-12 px-6 py-24 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1 text-sm font-semibold uppercase tracking-[0.24em] text-white/80 backdrop-blur">
-            HealthHub Care Platform
-          </span>
-          <div className="max-w-3xl space-y-6">
-            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl lg:leading-snug">
-              Connected healthcare, brought into one digital home
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-12 px-6 py-20 text-center lg:px-8 lg:py-28">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2 shadow-lg backdrop-blur-sm">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
+            <span className="text-sm font-semibold tracking-wide text-white">
+              Healthcare coordination platform
+            </span>
+          </div>
+          <div className="max-w-4xl space-y-6">
+            <h1 className="bg-gradient-to-br from-white via-white to-white/80 bg-clip-text text-5xl font-bold leading-tight text-transparent sm:text-6xl lg:text-7xl lg:leading-tight">
+              Connected healthcare in one digital home
             </h1>
-            <p className="text-lg text-white/80 sm:text-xl">
-              HealthHub unites patients, GPs, specialists, diagnostics, and pharmacy teams on a single secure thread so
-              every moment of care stays coordinated.
+            <p className="mx-auto max-w-2xl text-lg text-white/90 sm:text-xl">
+              HealthHub unites patients, GPs, specialists, diagnostics, and pharmacy teams on a single secure platform
+              where every moment of care stays coordinated.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/patient/login"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary-900 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+              href="/patient/signup"
+              className="group flex items-center gap-2 rounded-full bg-white px-7 py-4 text-base font-semibold text-primary-900 shadow-2xl transition hover:-translate-y-1 hover:shadow-3xl"
             >
-              Patient sign in
+              Create patient account
+              <svg className="h-4 w-4 transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
             <button
               onClick={scrollToPartners}
-              className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+              className="rounded-full border-2 border-white/40 px-7 py-4 text-base font-semibold text-white backdrop-blur-sm transition hover:border-white hover:bg-white/10"
             >
-              View partner portals
+              Explore partner portals
             </button>
-            <Link
-              href="/contact"
-              className="rounded-full border border-transparent bg-primary-500/90 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary-400"
-            >
-              Talk to our team
-            </Link>
           </div>
-          <div className="grid w-full gap-4 rounded-3xl bg-white/10 p-6 text-left backdrop-blur md:grid-cols-3">
+          <div className="mt-8 grid w-full gap-6 rounded-3xl border border-white/20 bg-white/5 p-8 text-left backdrop-blur-md shadow-2xl md:grid-cols-3">
             {heroHighlights.map(({ title, copy, Icon }) => (
-              <div key={title} className="flex items-start gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white">
-                  <Icon className="h-5 w-5" />
-                </span>
+              <div key={title} className="flex items-start gap-4">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-400 to-secondary-500 shadow-lg">
+                  <Icon className="h-6 w-6 text-white" />
+                </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold">{title}</p>
-                  <p className="text-sm text-white/80">{copy}</p>
+                  <p className="font-semibold text-white">{title}</p>
+                  <p className="text-sm leading-relaxed text-white/80">{copy}</p>
                 </div>
               </div>
             ))}
@@ -163,62 +193,85 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative -mt-16 space-y-24 rounded-t-[48px] bg-white pb-24 pt-20 text-gray-900">
+      <main className="relative space-y-24 bg-white pb-24 pt-16 text-gray-900">
         <section className="mx-auto max-w-6xl px-6 lg:px-8" id="partner-portals">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-            <div className="space-y-5">
-              <span className="inline-block rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-700">
-                Entry points
-              </span>
-              <h2 className="text-3xl font-semibold text-primary-900 sm:text-4xl">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-50 to-secondary-50 px-4 py-2 shadow-sm">
+                <div className="h-2 w-2 rounded-full bg-primary-500" />
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary-700">
+                  Partner portals
+                </span>
+              </div>
+              <h2 className="text-4xl font-bold text-primary-900 sm:text-5xl">
                 Purpose-built spaces for every care partner
               </h2>
-              <p className="text-base text-body">
-                Each portal keeps teams focused on the tasks and data that matter. Switch between roles without losing
-                the patient narrative or compromising privacy.
+              <p className="text-lg leading-relaxed text-gray-600">
+                Each portal is designed for specific roles—GPs, specialists, diagnostics, and pharmacies—with tools that
+                keep teams focused while maintaining a unified patient narrative.
               </p>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-5 md:grid-cols-2">
                 {partnerLinks.map(({ label, description, href, Icon }) => (
                   <Link
                     key={label}
                     href={href}
-                    className="flex h-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary-200 hover:shadow-lg"
+                    className="group flex h-full flex-col gap-4 rounded-2xl border-2 border-gray-100 bg-white p-6 shadow-md transition hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-600">
-                          <Icon className="h-5 w-5" />
-                        </span>
-                        <p className="text-sm font-semibold text-primary-900">{label}</p>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white shadow-lg">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                        <p className="font-semibold text-primary-900">{label}</p>
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-primary-500">Sign in</span>
+                      <svg className="h-5 w-5 text-primary-500 transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </div>
-                    <p className="text-sm text-body">{description}</p>
+                    <p className="text-sm leading-relaxed text-gray-600">{description}</p>
                   </Link>
                 ))}
               </div>
             </div>
-            <div className="rounded-3xl bg-gradient-to-br from-primary-600 to-secondary-600 p-8 text-white shadow-xl">
-              <h3 className="text-2xl font-semibold">Why teams choose HealthHub</h3>
-              <ul className="mt-6 space-y-5 text-sm text-white/80">
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-white/70" aria-hidden="true" />
-                  Secure messaging, video, tasks, and documents live on one patient timeline.
+            <div className="rounded-3xl bg-gradient-to-br from-primary-600 via-primary-500 to-secondary-600 p-10 text-white shadow-2xl">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                <HeartPulseIcon className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold">Why teams choose HealthHub</h3>
+              <ul className="mt-8 space-y-6">
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/20">
+                    <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-white/95">Secure messaging, video, tasks, and documents live on one patient timeline</p>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-white/70" aria-hidden="true" />
-                  Automated consent checks and permissions keep sensitive data scoped to each role.
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/20">
+                    <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-white/95">Automated consent checks and permissions keep sensitive data scoped to each role</p>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-white/70" aria-hidden="true" />
-                  Real-time analytics give providers visibility across throughput, wait times, and outcomes.
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/20">
+                    <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-white/95">Real-time analytics give providers visibility across throughput, wait times, and outcomes</p>
                 </li>
               </ul>
               <Link
                 href="/contact"
-                className="mt-8 inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm font-semibold text-primary-700 transition hover:bg-white/90"
+                className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-primary-700 shadow-xl transition hover:shadow-2xl hover:brightness-105"
               >
                 Request a walkthrough
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
           </div>
