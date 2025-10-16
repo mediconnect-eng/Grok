@@ -47,12 +47,13 @@ export default function PatientLogin() {
     setError('');
     
     try {
-      // For now, we'll show a message that Google OAuth is not yet implemented
-      setError('Google sign-in will be available in the next update. Please use email login for now.');
+      await signIn.social({
+        provider: 'google',
+        callbackURL: '/patient/home',
+      });
     } catch (err) {
       setError('Google sign-in failed. Please try again.');
       console.error('Google signin error:', err);
-    } finally {
       setIsGoogleLoading(false);
     }
   };

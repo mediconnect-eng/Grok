@@ -23,9 +23,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 2: Authentication
+    // Allow any authenticated user to create a consultation (some sessions may not have an explicit role)
     const authResult = await requireAuth(request, {
       requireAuth: true,
-      requiredRoles: ['patient'],
+      requiredRoles: [], // empty = any authenticated user
     });
 
     if (!authResult.success) {
@@ -194,10 +195,10 @@ export async function GET(request: NextRequest) {
       return rateLimitResult.response!;
     }
 
-    // Step 2: Authentication
+    // Step 2: Authentication - allow any authenticated user to fetch their consultations
     const authResult = await requireAuth(request, {
       requireAuth: true,
-      requiredRoles: ['patient'],
+      requiredRoles: [],
     });
 
     if (!authResult.success) {

@@ -399,6 +399,15 @@ export default function GPConsultationDetailPage() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-semibold text-gray-900 mb-4">Actions</h3>
               <div className="space-y-3">
+                {['accepted', 'in_progress', 'scheduled'].includes(consultation.status) && (
+                  <Link
+                    href={`/consultations/${consultation.id}/call`}
+                    className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-medium"
+                  >
+                    dY"� Join Video Call
+                  </Link>
+                )}
+
                 <Link
                   href={`/gp/consultations/${consultation.id}/prescribe`}
                   className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium"

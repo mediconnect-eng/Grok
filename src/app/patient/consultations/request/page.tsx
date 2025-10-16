@@ -155,7 +155,7 @@ export default function RequestConsultationPage() {
             {/* Provider Type */}
             <div>
               <label className="block text-sm font-medium text-ink mb-3">
-                Type of Provider <span className="text-red-500">*</span>
+                Who would you like to consult with? <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
@@ -170,8 +170,7 @@ export default function RequestConsultationPage() {
                   <div className="text-center">
                     <div className="text-3xl mb-2">🩺</div>
                     <div className="font-semibold text-ink">General Practitioner</div>
-                    <div className="text-sm text-ink-light mt-1">For general health concerns</div>
-                    <div className="text-sm text-primary-600 font-medium mt-2">$50</div>
+                    <div className="text-sm text-ink-light mt-2">For general health concerns, prescriptions, and referrals</div>
                   </div>
                 </button>
                 <button
@@ -186,8 +185,7 @@ export default function RequestConsultationPage() {
                   <div className="text-center">
                     <div className="text-3xl mb-2">👨‍⚕️</div>
                     <div className="font-semibold text-ink">Specialist</div>
-                    <div className="text-sm text-ink-light mt-1">For specialized care</div>
-                    <div className="text-sm text-primary-600 font-medium mt-2">$100</div>
+                    <div className="text-sm text-ink-light mt-2">For specialized medical care and follow-ups</div>
                   </div>
                 </button>
               </div>

@@ -109,13 +109,15 @@ export async function POST(request: NextRequest) {
       const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
       // Build the token
+      // buildTokenWithUid(appId, appCertificate, channelName, uid, role, tokenExpire, privilegeExpire)
       const token = RtcTokenBuilder.buildTokenWithUid(
         APP_ID,
         APP_CERTIFICATE,
         channelName,
         uid,
         role,
-        privilegeExpiredTs
+        expirationTimeInSeconds, // tokenExpire (how long from now)
+        privilegeExpiredTs // privilegeExpiredTs (absolute timestamp)
       );
 
       // Update consultation status to in-progress if it was scheduled

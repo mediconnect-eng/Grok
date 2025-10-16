@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   StethoscopeIcon,
@@ -49,6 +51,13 @@ const highlights = [
 ];
 
 export default function Home() {
+  const scrollToPartners = () => {
+    const partnersSection = document.getElementById('partner-portals');
+    if (partnersSection) {
+      partnersSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-white">
       <header className="relative overflow-hidden">
@@ -74,12 +83,12 @@ export default function Home() {
             >
               Continue as Patient
             </Link>
-            <Link
-              href="/specialist/login"
+            <button
+              onClick={scrollToPartners}
               className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
             >
               Explore Partner Portals
-            </Link>
+            </button>
           </div>
         </div>
       </header>
@@ -108,7 +117,7 @@ export default function Home() {
                 </div>
                 <span className="ml-4 hidden text-lg font-semibold text-primary-700 md:block">→</span>
               </Link>
-              <div className="flex-1 rounded-card border border-gray-200 bg-white p-6 shadow-card">
+              <div id="partner-portals" className="flex-1 rounded-card border border-gray-200 bg-white p-6 shadow-card">
                 <p className="text-sm font-semibold uppercase tracking-wide text-subtle">Partners</p>
                 <p className="mt-1 text-sm text-body">
                   Select your portal to collaborate on shared patient workflows.

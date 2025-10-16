@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     
     // Permissions Policy (disable unnecessary features)
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+    'Permissions-Policy': 'camera=(self), microphone=(self), geolocation=(), interest-cohort=()',
     
     // XSS Protection (legacy, but still good to have)
     'X-XSS-Protection': '1; mode=block',
@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://api.better-auth.com", // Add your API domains
+      "connect-src 'self' https://api.better-auth.com https://*.agora.io https://*.agoraapi.com wss://*.agora.io wss://*.agoraapi.com",
       "frame-ancestors 'none'",
     ].join('; '),
     

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '@/lib/auth-client';
+import { signUp, signIn } from '@/lib/auth-client';
 
 export default function PatientSignup() {
   const router = useRouter();
@@ -67,12 +67,13 @@ export default function PatientSignup() {
     setError('');
     
     try {
-      // For now, we'll show a message that Google OAuth is not yet implemented
-      setError('Google sign-in will be available in the next update. Please use email registration for now.');
+      await signIn.social({
+        provider: 'google',
+        callbackURL: '/patient/home',
+      });
     } catch (err) {
-      setError('Google sign-in failed. Please try again.');
+      setError('Google sign-up failed. Please try again.');
       console.error('Google signup error:', err);
-    } finally {
       setIsGoogleLoading(false);
     }
   };

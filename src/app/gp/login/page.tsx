@@ -30,8 +30,15 @@ export default function GPLogin() {
       if (result.error) {
         setError(result.error.message || 'Login failed. Please check your credentials.');
       } else {
-        // Login successful - redirect to GP dashboard
-        router.push('/gp');
+        // Login successful - set role in localStorage and redirect
+        const userData = {
+          id: result.data?.user?.id || email,
+          name: result.data?.user?.name || email,
+          email: email,
+          role: 'gp'
+        };
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        router.push('/gp/consultations');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
