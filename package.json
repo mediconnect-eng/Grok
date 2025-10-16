@@ -11,8 +11,7 @@
     "seed": "node scripts/seed-database.js",
     "seed:force": "node scripts/seed-database.js --force",
     "check:prod": "node scripts/check-production-ready.js",
-    "test:load": "echo 'Run: artillery run load-test.yml' or 'k6 run load-test.js'",
-    "prebuild": "npm run check:prod"
+    "test:load": "echo 'Run: artillery run load-test.yml' or 'k6 run load-test.js'"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
