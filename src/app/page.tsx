@@ -402,7 +402,9 @@ export default function Home() {
             Contact
           </Link>
         </div>
-        <p className="mt-6 text-xs text-white/60">&copy; {new Date().getFullYear()} HealthHub. All rights reserved.</p>
+        <p className="mt-6 text-xs text-white/60">
+          &copy; {new Date().getFullYear()} HealthHub. All rights reserved.
+        </p>
       </footer>
     </div>
   );
