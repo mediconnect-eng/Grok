@@ -72,16 +72,6 @@ export const auth = betterAuth({
     // Use secure cookies in production
     useSecureCookies: process.env.NODE_ENV === 'production',
     
-    // Cookie domain for production
-    cookieDomain: process.env.NODE_ENV === 'production' 
-      ? '.healthhubinternational.com' 
-      : undefined,
-    
-    // Cross-site request forgery protection
-    crossSubDomainCookies: {
-      enabled: true,
-    },
-    
     // Generate new session ID on login
     generateSessionToken: true,
   },

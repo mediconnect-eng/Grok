@@ -84,7 +84,7 @@ const journeyMilestones = [
 const securityCommitments = [
   {
     title: 'Role-based access controls',
-    copy: 'Every action is scoped to the partner's approved permissions to minimise data exposure.',
+    copy: "Every action is scoped to the partner's approved permissions to minimise data exposure.",
     Icon: LockIcon,
   },
   {

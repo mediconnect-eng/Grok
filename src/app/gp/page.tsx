@@ -11,13 +11,13 @@ export default function GPHome() {
   useEffect(() => {
     if (!isPending) {
       if (!session?.user) {
-        router.push('/gp/login');
+        window.location.href = '/gp/login';
       } else {
         // Redirect to the real consultations dashboard
-        router.push('/gp/consultations');
+        window.location.href = '/gp/consultations';
       }
     }
-  }, [session, isPending, router]);
+  }, [session, isPending]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

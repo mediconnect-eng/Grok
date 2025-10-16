@@ -30,7 +30,7 @@ export default function SpecialistLogin() {
       if (result.error) {
         setError(result.error.message || 'Login failed. Please check your credentials.');
       } else {
-        // Login successful - set role in localStorage and redirect
+        // Login successful - set role in localStorage and use hard redirect
         const userData = {
           id: result.data?.user?.id || email,
           name: result.data?.user?.name || email,
@@ -38,7 +38,7 @@ export default function SpecialistLogin() {
           role: 'specialist'
         };
         localStorage.setItem('currentUser', JSON.stringify(userData));
-        router.push('/specialist');
+        window.location.href = '/specialist';
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
