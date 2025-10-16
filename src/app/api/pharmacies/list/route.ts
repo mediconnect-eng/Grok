@@ -11,8 +11,7 @@ const pool = new Pool({
 export async function GET(request: NextRequest) {
   try {
     // Get all users with role 'pharmacy' and application approved
-    // For now, we'll get all pharmacy users
-    // Later, this can be filtered by location
+    // Join with partner_applications table (not provider_applications)
     
     const query = `
       SELECT 
@@ -25,12 +24,12 @@ export async function GET(request: NextRequest) {
         pa.address,
         pa.city,
         pa.state,
-        pa.zip_code
+        pa.postal_code
       FROM "user" u
-      LEFT JOIN provider_applications pa ON u.id = pa.user_id
+      LEFT JOIN partner_applications pa ON u.id = pa.user_id
       WHERE u.role = 'pharmacy' 
         AND (pa.status = 'approved' OR pa.status IS NULL)
-      ORDER BY u.name ASC
+      ORDER BY pa.business_name ASC, u.name ASC
     `;
 
     const result = await pool.query(query);
@@ -44,7 +43,7 @@ export async function GET(request: NextRequest) {
       address: row.address || 'Address not available',
       city: row.city,
       state: row.state,
-      zipCode: row.zip_code,
+      zipCode: row.postal_code,
       // For future location-based sorting
       distance: null
     }));

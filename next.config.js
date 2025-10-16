@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Vercel deployment optimization
+  output: 'standalone',
+  
   // Disable ESLint during builds (fix warnings post-deployment)
   eslint: {
     ignoreDuringBuilds: true,
