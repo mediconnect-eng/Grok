@@ -29,12 +29,31 @@ export default function PatientLogin() {
       });
 
       if (result.error) {
-        setError(result.error.message || 'Login failed. Please check your credentials.');
+        // Provide specific error messages
+        const errorMsg = result.error.message || '';
+        
+        if (errorMsg.toLowerCase().includes('credentials') || errorMsg.toLowerCase().includes('invalid')) {
+          setError('Invalid email or password. Please check and try again.');
+        } else if (errorMsg.toLowerCase().includes('verified')) {
+          setError('Please verify your email before logging in.');
+        } else if (errorMsg.toLowerCase().includes('not found')) {
+          setError('No account found with this email. Please sign up first.');
+        } else {
+          setError(errorMsg || 'Login failed. Please check your credentials.');
+        }
+        
+        console.error('Login error:', result.error);
       } else {
-        // Login successful - redirect to patient home
+        // Login successful
+        console.log('Login successful, redirecting...');
+        
+        // Give session cookie time to set
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Redirect to patient home
         router.push('/patient/home');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('An unexpected error occurred. Please try again.');
       console.error('Login error:', err);
     } finally {

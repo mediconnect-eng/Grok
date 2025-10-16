@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -97,13 +95,43 @@ export default function PatientHome() {
 
   // Load user profile with dependents
   useEffect(() => {
-    if (session?.user?.email) {
+    // Don't do anything while session is still loading
+    if (isPending) {
+      return;
+    }
+    
+    // If session loaded and no user, redirect to login
+    if (!session?.user) {
+      console.log('No session found, redirecting to login...');
+      router.push('/patient/login');
+      return;
+    }
+    
+    // Session exists, load profile
+    if (session.user.email) {
       const savedProfile = localStorage.getItem(`profile_${session.user.email}`);
       if (savedProfile) {
         setUserProfile(JSON.parse(savedProfile));
       }
     }
-  }, [session]);
+  }, [session, isPending, router]);
+  
+  // Show loading state while checking session
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-ink-light text-lg">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // If no session after loading, don't render (will redirect)
+  if (!session?.user) {
+    return null;
+  }
 
   // Fetch calendar events (consultations, prescriptions, diagnostics)
   useEffect(() => {
