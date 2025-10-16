@@ -23,6 +23,7 @@ export default function PatientSignupPage() {
     errors: string[];
   }>({ strength: '', errors: [] });
   const [loading, setLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   // Handle input changes
@@ -150,6 +151,32 @@ export default function PatientSignupPage() {
     }
   };
 
+  // Handle Google Sign-In
+  const handleGoogleSignIn = async () => {
+    setErrors({});
+    setIsGoogleLoading(true);
+
+    try {
+      const { signIn } = await import('@/lib/auth-client');
+      const baseURL = typeof window !== 'undefined' ? window.location.origin : undefined;
+
+      await signIn?.social?.({
+        provider: 'google',
+        ...(baseURL
+          ? {
+              callbackURL: `${baseURL}/patient/home`,
+              newUserCallbackURL: `${baseURL}/onboarding/age`,
+            }
+          : {}),
+      });
+    } catch (error: any) {
+      setErrors({ 
+        submit: error.message || 'Google sign-up failed. Please try again.' 
+      });
+      setIsGoogleLoading(false);
+    }
+  };
+
   // Password strength indicator
   const getStrengthColor = (strength: string) => {
     if (strength === 'very-strong') return 'bg-green-500';
@@ -202,7 +229,7 @@ export default function PatientSignupPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🏥 Join MediConnect
+            🏥 Join Health Hub
           </h1>
           <p className="text-gray-600">
             Create your patient account to access healthcare services
@@ -412,6 +439,51 @@ export default function PatientSignupPage() {
               )}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            {/* Google Sign-In Button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isGoogleLoading || loading}
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
+            >
+              <svg
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M21.35 11.1h-9.18v2.91h5.35c-.23 1.26-.93 2.33-1.99 3.04l3.21 2.49c1.88-1.73 2.96-4.28 2.96-7.3 0-.7-.06-1.37-.18-2.01z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12.17 21c2.7 0 4.96-.9 6.61-2.45l-3.21-2.49c-.89.6-2.03.96-3.4.96-2.62 0-4.84-1.77-5.63-4.16l-3.31 2.55C5 18.78 8.32 21 12.17 21z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M6.54 12.86c-.2-.6-.31-1.24-.31-1.9s.11-1.3.31-1.9l-3.32-2.55C2.45 8.2 2 9.81 2 11.45 2 13.1 2.45 14.7 3.22 16.24l3.32-2.55z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12.17 6.1c1.47 0 2.78.5 3.81 1.49l2.85-2.85C16.99 2.69 14.73 1.7 12.17 1.7 8.32 1.7 5 3.92 3.22 6.66l3.32 2.55c.79-2.39 3.01-4.16 5.63-4.16z"
+                  fill="#EA4335"
+                />
+              </svg>
+              {isGoogleLoading ? 'Connecting to Google…' : 'Sign up with Google'}
+            </button>
+          </div>
 
           {/* Login Link */}
           <div className="mt-6 text-center">
