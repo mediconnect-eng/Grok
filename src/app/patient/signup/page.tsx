@@ -42,17 +42,27 @@ export default function PatientSignup() {
     }
 
     try {
-      const result = await signUp.email({
-        email: formData.email.trim(),
-        password: formData.password,
-        name: formData.name.trim(),
+      // Use custom signup endpoint that sets role in database
+      const response = await fetch('/api/auth/signup-with-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+          name: formData.name.trim(),
+          role: 'patient',
+        }),
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Signup failed. Please try again.');
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setError(result.error || 'Signup failed. Please try again.');
       } else {
-        // Signup successful - redirect with success message
-        console.log('Signup successful, redirecting to login...');
+        // Signup successful - role is now set in database
+        console.log('Patient signup successful:', result);
         router.push('/patient/login?new=true');
       }
     } catch (err) {

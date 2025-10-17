@@ -49,25 +49,28 @@ export default function PharmacySignup() {
     }
 
     try {
-      const result = await signUp.email({
-        email: formData.email.trim(),
-        password: formData.password,
-        name: formData.name.trim(),
-        image: undefined,
+      // Use custom signup endpoint that sets role in database
+      const response = await fetch('/api/auth/signup-with-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+          name: formData.name.trim(),
+          role: 'pharmacy',
+        }),
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Signup failed. Please try again.');
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setError(result.error || 'Signup failed. Please try again.');
       } else {
-        // Signup successful - set role in localStorage and redirect
-        const userData = {
-          id: result.data?.user?.id || formData.email,
-          name: formData.name,
-          email: formData.email,
-          role: 'pharmacy'
-        };
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        router.push('/pharmacy/scanner');
+        // Signup successful - role is now set in database
+        console.log('Pharmacy signup successful:', result);
+        router.push('/pharmacy/login?new=true');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');

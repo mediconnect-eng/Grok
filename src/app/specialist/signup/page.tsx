@@ -49,25 +49,28 @@ export default function SpecialistSignup() {
     }
 
     try {
-      const result = await signUp.email({
-        email: formData.email.trim(),
-        password: formData.password,
-        name: formData.name.trim(),
-        image: undefined,
+      // Use custom signup endpoint that sets role in database
+      const response = await fetch('/api/auth/signup-with-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+          name: formData.name.trim(),
+          role: 'specialist',
+        }),
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Signup failed. Please try again.');
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setError(result.error || 'Signup failed. Please try again.');
       } else {
-        // Signup successful - set role in localStorage and redirect
-        const userData = {
-          id: result.data?.user?.id || formData.email,
-          name: formData.name,
-          email: formData.email,
-          role: 'specialist'
-        };
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        router.push('/specialist');
+        // Signup successful - role is now set in database
+        console.log('Specialist signup successful:', result);
+        router.push('/specialist/login?new=true');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
