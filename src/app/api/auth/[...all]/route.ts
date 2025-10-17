@@ -8,6 +8,7 @@ const authHandlers = toNextJsHandler(auth);
 
 /**
  * Wrap auth handlers with rate limiting
+ * EXCLUDES OAuth callbacks from rate limiting
  */
 function withRateLimit(handler: Function) {
   return async (req: NextRequest) => {
@@ -15,10 +16,11 @@ function withRateLimit(handler: Function) {
     const identifier = getClientIdentifier(req);
     const pathname = req.nextUrl.pathname;
     
-    // Skip rate limiting for OAuth callbacks
-    const isOAuthCallback = pathname.includes('/callback/');
+    // Skip rate limiting for OAuth callbacks and sign-up endpoints
+    const isOAuthCallback = pathname.includes('/callback/') || pathname.includes('/oauth/');
+    const isSignUp = pathname.includes('/sign-up/');
     
-    if (!isOAuthCallback) {
+    if (!isOAuthCallback && !isSignUp) {
       // Apply rate limiting to auth endpoints
       const rateLimitResult = checkRateLimit(identifier, RateLimits.AUTH);
 
@@ -55,11 +57,12 @@ function withRateLimit(handler: Function) {
         path: pathname,
         method: req.method,
         isCallback: isOAuthCallback,
+        isSignUp: isSignUp,
       });
       
       const response = await handler(req);
       
-      if (response instanceof NextResponse && !isOAuthCallback) {
+      if (response instanceof NextResponse && !isOAuthCallback && !isSignUp) {
         const rateLimitResult = checkRateLimit(identifier, RateLimits.AUTH);
         response.headers.set('X-RateLimit-Limit', RateLimits.AUTH.maxRequests.toString());
         response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
@@ -76,6 +79,7 @@ function withRateLimit(handler: Function) {
         path: pathname,
         method: req.method,
         isCallback: isOAuthCallback,
+        isSignUp: isSignUp,
       });
       throw error;
     }
