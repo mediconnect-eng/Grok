@@ -32,35 +32,64 @@ export default function GPConsultationsPage() {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<'pending' | 'accepted' | 'all'>('pending');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [gpUser, setGpUser] = useState<any>(null);
 
-  // Mock GP user for testing without authentication
-  const mockGPUser = {
-    id: 'demo-gp-id',
-    name: 'Demo GP',
-    email: 'demo@gp.com',
-    role: 'gp'
+  // Fetch a real GP user from database on mount
+  useEffect(() => {
+    fetchGPUser();
+  }, []);
+
+  const fetchGPUser = async () => {
+    try {
+      // Try to get the doctor@healthhub.com account first, or any GP
+      const response = await fetch('/api/users/gp');
+      if (response.ok) {
+        const data = await response.json();
+        setGpUser(data.user);
+      } else {
+        // Fallback to demo user if no GP found
+        setGpUser({
+          id: '5e8115c5-7b46-421b-b136-f4d029568d1c', // doctor@healthhub.com ID
+          name: 'Dr. John Smith',
+          email: 'doctor@healthhub.com',
+          role: 'gp'
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch GP user:', err);
+      // Use fallback
+      setGpUser({
+        id: '5e8115c5-7b46-421b-b136-f4d029568d1c',
+        name: 'Dr. John Smith',
+        email: 'doctor@healthhub.com',
+        role: 'gp'
+      });
+    }
   };
 
   useEffect(() => {
-    fetchConsultations();
-    
-    // Poll for new consultations every 5 seconds
-    const interval = setInterval(fetchConsultations, 5000);
-    return () => clearInterval(interval);
-  }, [filter]);
+    if (gpUser) {
+      fetchConsultations();
+      
+      // Poll for new consultations every 5 seconds
+      const interval = setInterval(fetchConsultations, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [filter, gpUser]);
 
   const fetchConsultations = async () => {
+    if (!gpUser) return;
 
     try {
       // Fetch pending (unassigned) and accepted (assigned to this GP)
       let url = `/api/consultations/provider?providerType=gp`;
       
       if (filter === 'accepted') {
-        url = `/api/consultations/provider?providerId=${mockGPUser.id}&status=accepted`;
+        url = `/api/consultations/provider?providerId=${gpUser.id}&status=accepted`;
       } else if (filter === 'pending') {
         url = `/api/consultations/provider?providerType=gp&status=pending`;
       } else {
-        url = `/api/consultations/provider?providerId=${mockGPUser.id}`;
+        url = `/api/consultations/provider?providerId=${gpUser.id}`;
       }
 
       const response = await fetch(url);
@@ -80,6 +109,8 @@ export default function GPConsultationsPage() {
   };
 
   const handleAccept = async (consultationId: string) => {
+    if (!gpUser) return;
+    
     setActionLoading(consultationId);
 
     try {
@@ -89,7 +120,7 @@ export default function GPConsultationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          providerId: mockGPUser.id,
+          providerId: gpUser.id,
           action: 'accept',
         }),
       });
@@ -116,6 +147,8 @@ export default function GPConsultationsPage() {
       return;
     }
 
+    if (!gpUser) return;
+
     setActionLoading(consultationId);
 
     try {
@@ -125,7 +158,7 @@ export default function GPConsultationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          providerId: mockGPUser.id,
+          providerId: gpUser.id,
           action: 'decline',
         }),
       });
@@ -178,7 +211,7 @@ export default function GPConsultationsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-ink">GP Dashboard</h1>
-              <p className="text-ink-light mt-1">Dr. {mockGPUser.name}</p>
+              <p className="text-ink-light mt-1">Dr. {gpUser?.name || 'Loading...'}</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">

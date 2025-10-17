@@ -46,7 +46,7 @@ export default function PatientConsultationsPage() {
     if (!session?.user?.id) return;
 
     try {
-      const response = await fetch(`/api/consultations/create?patientId=${session.user.id}`);
+      const response = await fetch(`/api/consultations/patient?patientId=${session.user.id}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch consultations');
