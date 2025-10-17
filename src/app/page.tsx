@@ -111,12 +111,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-teal-950 to-slate-900 text-white">
       {/* Navigation */}
       <nav className="relative z-50 border-b border-white/10 bg-slate-900/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-teal-600 to-emerald-700 shadow-lg">
               <HeartPulseIcon className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white">HealthHub</span>
@@ -130,7 +130,7 @@ export default function Home() {
             </Link>
             <Link
               href="/patient/signup"
-              className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:brightness-110"
+              className="rounded-lg bg-gradient-to-r from-teal-600 to-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:brightness-110"
             >
               Get started
             </Link>
@@ -139,13 +139,13 @@ export default function Home() {
       </nav>
 
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900">
-          <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-blue-500/20 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-purple-500/20 blur-3xl" />
-          <div className="absolute left-0 top-1/2 h-[300px] w-[300px] -translate-x-1/3 -translate-y-1/2 rounded-full bg-blue-400/15 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-teal-950 to-slate-900">
+          <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-teal-600/20 blur-3xl" />
+          <div className="absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-emerald-600/20 blur-3xl" />
+          <div className="absolute left-0 top-1/2 h-[300px] w-[300px] -translate-x-1/3 -translate-y-1/2 rounded-full bg-teal-500/15 blur-3xl" />
         </div>
         <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-12 px-6 py-20 text-center lg:px-8 lg:py-28">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/40 bg-blue-500/20 px-5 py-2 shadow-lg backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/40 bg-teal-600/20 px-5 py-2 shadow-lg backdrop-blur-sm">
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
             <span className="text-sm font-semibold tracking-wide text-white">
               Healthcare coordination platform
@@ -163,7 +163,7 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/patient/signup"
-              className="group flex items-center gap-2 rounded-full bg-white px-7 py-4 text-base font-semibold text-blue-900 shadow-2xl transition hover:-translate-y-1 hover:shadow-3xl"
+              className="group flex items-center gap-2 rounded-full bg-white px-7 py-4 text-base font-semibold text-teal-900 shadow-2xl transition hover:-translate-y-1 hover:shadow-3xl"
             >
               Create patient account
               <svg className="h-4 w-4 transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,10 +177,10 @@ export default function Home() {
               Explore partner portals
             </button>
           </div>
-          <div className="mt-8 grid w-full gap-6 rounded-3xl border border-blue-400/30 bg-slate-800/40 p-8 text-left backdrop-blur-md shadow-2xl md:grid-cols-3">
+          <div className="mt-8 grid w-full gap-6 rounded-3xl border border-teal-400/30 bg-slate-800/40 p-8 text-left backdrop-blur-md shadow-2xl md:grid-cols-3">
             {heroHighlights.map(({ title, copy, Icon }) => (
               <div key={title} className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-emerald-700 shadow-lg">
                   <Icon className="h-6 w-6 text-white" />
                 </div>
                 <div className="space-y-1">
