@@ -93,58 +93,48 @@ export default function PatientHome() {
     router.push(`/patient/consultations/request?date=${date.toISOString()}`);
   };
 
-  // Load user profile and check session
+  // Load user profile with dependents
   useEffect(() => {
-    // Don't do anything while session is still loading
-    if (isPending) {
-      return;
-    }
-    
-    // If session loaded and no user, redirect to login
-    if (!session?.user) {
-      console.log('No session found, redirecting to login...');
-      window.location.href = '/patient/login';
-      return;
-    }
-    
-    // Session exists, load profile
-    if (session.user.email) {
+    if (session?.user?.email) {
       const savedProfile = localStorage.getItem(`profile_${session.user.email}`);
       if (savedProfile) {
         setUserProfile(JSON.parse(savedProfile));
       }
     }
-  }, [session, isPending]);
+  }, [session]);
 
   // Fetch calendar events (consultations, prescriptions, diagnostics)
-  // MUST be called before any conditional returns to follow Rules of Hooks
   useEffect(() => {
     const fetchEvents = async () => {
-      if (!session?.user || isPending) return;
+      if (!session?.user) return;
 
       setIsLoadingEvents(true);
       try {
         const events: CalendarEvent[] = [];
 
         // Fetch consultations
-        const consultationsRes = await fetch('/api/consultations/patient');
+        const consultationsRes = await fetch(`/api/consultations/patient?patientId=${session.user.id}`);
         if (consultationsRes.ok) {
-          const consultations = await consultationsRes.json();
+          const data = await consultationsRes.json();
+          const consultations = data.consultations || [];
           consultations.forEach((consultation: any) => {
-            const eventDate = consultation.preferred_date 
-              ? new Date(consultation.preferred_date)
-              : new Date(consultation.created_at);
-            
-            events.push({
-              id: consultation.id,
-              title: `Consultation with ${consultation.doctor_name || 'Doctor'}`,
-              date: eventDate,
-              time: consultation.preferred_time,
-              type: 'consultation',
-              status: consultation.status,
-              description: consultation.chief_complaint,
-              provider: consultation.doctor_name,
-            });
+            // Only show accepted consultations in calendar
+            if (consultation.status === 'accepted' || consultation.status === 'in_progress') {
+              const eventDate = consultation.preferred_date 
+                ? new Date(consultation.preferred_date)
+                : new Date(consultation.accepted_at || consultation.created_at);
+              
+              events.push({
+                id: consultation.id,
+                title: `Consultation with ${consultation.provider_name || 'Doctor'}`,
+                date: eventDate,
+                time: '10:00 AM', // Default time
+                type: 'consultation',
+                status: consultation.status,
+                description: consultation.chief_complaint,
+                provider: consultation.provider_name,
+              });
+            }
           });
         }
 
@@ -200,22 +190,23 @@ export default function PatientHome() {
     };
 
     fetchEvents();
-  }, [session, isPending]);
+  }, [session]);
 
-  // Show loading state while checking session (AFTER all hooks)
+  // Show loading state while checking session
   if (isPending) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-ink-light text-lg">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
-  
-  // If no session after loading, don't render (will redirect)
-  if (!session?.user) {
+
+  // Redirect to login if not authenticated
+  if (!session) {
+    router.push('/patient/login');
     return null;
   }
 
@@ -235,7 +226,7 @@ export default function PatientHome() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-6">
               <Link href="/" className="text-xl font-bold text-gray-900">
-                HealthHub
+                Mediconnect
               </Link>
             </div>
 
