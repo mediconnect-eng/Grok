@@ -115,28 +115,12 @@ export default function PatientHome() {
       }
     }
   }, [session, isPending]);
-  
-  // Show loading state while checking session
-  if (isPending) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-ink-light text-lg">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // If no session after loading, don't render (will redirect)
-  if (!session?.user) {
-    return null;
-  }
 
   // Fetch calendar events (consultations, prescriptions, diagnostics)
+  // MUST be called before any conditional returns to follow Rules of Hooks
   useEffect(() => {
     const fetchEvents = async () => {
-      if (!session?.user) return;
+      if (!session?.user || isPending) return;
 
       setIsLoadingEvents(true);
       try {
@@ -216,7 +200,24 @@ export default function PatientHome() {
     };
 
     fetchEvents();
-  }, [session]);
+  }, [session, isPending]);
+
+  // Show loading state while checking session (AFTER all hooks)
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-ink-light text-lg">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // If no session after loading, don't render (will redirect)
+  if (!session?.user) {
+    return null;
+  }
 
   const userName = session.user.name || 'User';
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
