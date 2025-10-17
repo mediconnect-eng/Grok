@@ -2,22 +2,14 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/lib/auth-client';
 
 export default function GPHome() {
   const router = useRouter();
-  const { data: session, isPending } = useSession();
 
   useEffect(() => {
-    if (!isPending) {
-      if (!session?.user) {
-        window.location.href = '/gp/login';
-      } else {
-        // Redirect to the real consultations dashboard
-        window.location.href = '/gp/consultations';
-      }
-    }
-  }, [session, isPending]);
+    // Bypass authentication - directly redirect to consultations
+    router.push('/gp/consultations');
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

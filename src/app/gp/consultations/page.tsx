@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useSession } from '@/lib/auth-client';
 
 interface Consultation {
   id: string;
@@ -27,7 +26,6 @@ interface Consultation {
 
 export default function GPConsultationsPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,32 +33,34 @@ export default function GPConsultationsPage() {
   const [filter, setFilter] = useState<'pending' | 'accepted' | 'all'>('pending');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!session?.user) {
-      router.push('/gp/login');
-      return;
-    }
+  // Mock GP user for testing without authentication
+  const mockGPUser = {
+    id: 'demo-gp-id',
+    name: 'Demo GP',
+    email: 'demo@gp.com',
+    role: 'gp'
+  };
 
+  useEffect(() => {
     fetchConsultations();
     
     // Poll for new consultations every 5 seconds
     const interval = setInterval(fetchConsultations, 5000);
     return () => clearInterval(interval);
-  }, [session, router, filter]);
+  }, [filter]);
 
   const fetchConsultations = async () => {
-    if (!session?.user?.id) return;
 
     try {
       // Fetch pending (unassigned) and accepted (assigned to this GP)
       let url = `/api/consultations/provider?providerType=gp`;
       
       if (filter === 'accepted') {
-        url = `/api/consultations/provider?providerId=${session.user.id}&status=accepted`;
+        url = `/api/consultations/provider?providerId=${mockGPUser.id}&status=accepted`;
       } else if (filter === 'pending') {
         url = `/api/consultations/provider?providerType=gp&status=pending`;
       } else {
-        url = `/api/consultations/provider?providerId=${session.user.id}`;
+        url = `/api/consultations/provider?providerId=${mockGPUser.id}`;
       }
 
       const response = await fetch(url);
@@ -80,8 +80,6 @@ export default function GPConsultationsPage() {
   };
 
   const handleAccept = async (consultationId: string) => {
-    if (!session?.user?.id) return;
-
     setActionLoading(consultationId);
 
     try {
@@ -91,7 +89,7 @@ export default function GPConsultationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          providerId: session.user.id,
+          providerId: mockGPUser.id,
           action: 'accept',
         }),
       });
@@ -118,8 +116,6 @@ export default function GPConsultationsPage() {
       return;
     }
 
-    if (!session?.user?.id) return;
-
     setActionLoading(consultationId);
 
     try {
@@ -129,7 +125,7 @@ export default function GPConsultationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          providerId: session.user.id,
+          providerId: mockGPUser.id,
           action: 'decline',
         }),
       });
@@ -160,17 +156,6 @@ export default function GPConsultationsPage() {
     }
   };
 
-  if (!session?.user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-ink-light">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -193,7 +178,7 @@ export default function GPConsultationsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-ink">GP Dashboard</h1>
-              <p className="text-ink-light mt-1">Dr. {session.user.name}</p>
+              <p className="text-ink-light mt-1">Dr. {mockGPUser.name}</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">

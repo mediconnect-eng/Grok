@@ -1,24 +1,16 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { signIn } from '@/lib/auth-client';
 
-function PatientLoginContent() {
+export default function PatientLogin() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  useEffect(() => {
-    if (searchParams?.get('new') === 'true') {
-      setSuccessMessage('Account created successfully! Please log in.');
-    }
-  }, [searchParams]);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -37,26 +29,12 @@ function PatientLoginContent() {
       });
 
       if (result.error) {
-        // Provide specific error messages
-        const errorMsg = result.error.message || '';
-        
-        if (errorMsg.toLowerCase().includes('credentials') || errorMsg.toLowerCase().includes('invalid')) {
-          setError('Invalid email or password. Please check and try again.');
-        } else if (errorMsg.toLowerCase().includes('verified')) {
-          setError('Please verify your email before logging in.');
-        } else if (errorMsg.toLowerCase().includes('not found')) {
-          setError('No account found with this email. Please sign up first.');
-        } else {
-          setError(errorMsg || 'Login failed. Please check your credentials.');
-        }
-        
-        console.error('Login error:', result.error);
+        setError(result.error.message || 'Login failed. Please check your credentials.');
       } else {
-        // Login successful - force page reload to ensure session is loaded
-        console.log('Login successful, redirecting...');
-        window.location.href = '/patient/home';
+        // Login successful - redirect to patient home
+        router.push('/patient/home');
       }
-    } catch (err: any) {
+    } catch (err) {
       setError('An unexpected error occurred. Please try again.');
       console.error('Login error:', err);
     } finally {
@@ -89,14 +67,14 @@ function PatientLoginContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-slate-800/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-500/20 p-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-white text-2xl font-bold">P</span>
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-white text-2xl font-bold">M</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-gray-300 mt-2">Sign in to access your healthcare</p>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
+          <p className="text-gray-600 mt-2">Sign in to access your healthcare</p>
         </div>
 
         {/* Google Sign In Button */}
@@ -116,18 +94,18 @@ function PatientLoginContent() {
 
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-600"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-3 bg-slate-800/40 text-gray-300">Or sign in with email</span>
+            <span className="px-3 bg-white text-gray-500">Or sign in with email</span>
           </div>
         </div>
 
         <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                 </svg>
                 Email Address
@@ -138,15 +116,15 @@ function PatientLoginContent() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 Password
@@ -157,21 +135,10 @@ function PatientLoginContent() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
-
-          {successMessage && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-sm text-green-600">{successMessage}</p>
-              </div>
-            </div>
-          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -205,7 +172,7 @@ function PatientLoginContent() {
             <button
               type="button"
               onClick={handleSignUp}
-              className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
             >
               Don&apos;t have an account? Sign up
             </button>
@@ -214,7 +181,7 @@ function PatientLoginContent() {
               <button
                 type="button"
                 onClick={handleBackClick}
-                className="flex items-center gap-2 text-gray-300 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -224,33 +191,13 @@ function PatientLoginContent() {
             </div>
           </div>
 
-          <div className="text-center pt-4 border-t border-gray-700">
-            <p className="text-xs text-gray-400">
+          <div className="text-center pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500">
               By continuing, you agree to receive SMS/email notifications
             </p>
           </div>
         </form>
       </div>
     </div>
-  );
-}
-
-export default function PatientLogin() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-slate-800/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-500/20 p-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <span className="text-white text-2xl font-bold">P</span>
-            </div>
-            <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-gray-300 mt-4">Loading...</p>
-          </div>
-        </div>
-      </div>
-    }>
-      <PatientLoginContent />
-    </Suspense>
   );
 }
