@@ -10,8 +10,7 @@ import { z } from 'zod';
 /**
  * Common field validations
  */
-// Flexible ID validation - accepts UUID or Better Auth ID format
-const uuid = z.string().min(1, 'ID is required').max(255, 'ID too long');
+const uuid = z.string().uuid('Invalid ID format');
 const email = z.string().email('Invalid email address');
 const phone = z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format');
 const url = z.string().url('Invalid URL format');
@@ -60,15 +59,15 @@ export const PasswordResetSchema = z.object({
  * Consultation Schemas
  */
 export const CreateConsultationSchema = z.object({
-  patientId: uuid,
+  patientId: z.string().min(1).max(255), // Relaxed from strict UUID for Better Auth compatibility
   providerType: z.enum(['gp', 'specialist'], {
     message: 'Provider type must be either "gp" or "specialist"',
   }),
   chiefComplaint: z.string().min(5, 'Chief complaint must be at least 5 characters').max(500),
   symptoms: z.string().max(2000, 'Symptoms description too long').optional(),
   duration: z.string().max(200, 'Duration description too long').optional(),
-  urgency: z.enum(['routine', 'urgent', 'emergency']).optional(),
-  preferredDate: z.string().datetime().optional().or(z.date().optional()),
+  urgency: z.enum(['routine', 'urgent', 'emergency']),
+  preferredDate: z.string().optional(), // Made fully optional with relaxed validation
   attachments: z.array(z.string().url()).max(10, 'Maximum 10 attachments allowed').optional(),
 });
 
