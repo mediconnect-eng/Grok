@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Shared state across Mediconnect partner and patient portals.
+ * Shared state across HealthHub partner and patient portals.
  * Data is persisted to localStorage and propagated between windows using BroadcastChannel
  * (falls back to the storage event when BroadcastChannel is unavailable).
  *
@@ -77,8 +77,8 @@ export interface SharedState {
   activePrescriptionId?: string | null;
 }
 
-const STORAGE_KEY = 'mediconnect:shared-state';
-const CHANNEL_NAME = 'mediconnect:shared-channel';
+const STORAGE_KEY = 'healthhub:shared-state';
+const CHANNEL_NAME = 'healthhub:shared-channel';
 
 const defaultState: SharedState = {
   seeded: false,

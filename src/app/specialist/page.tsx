@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import Link from 'next/link';
@@ -118,7 +116,7 @@ export default function SpecialistDashboard() {
         <header className="bg-white shadow">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              Mediconnect
+              HealthHub
             </Link>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <span>Specialist Portal · Dr. Sarah Johnson (Cardiology)</span>

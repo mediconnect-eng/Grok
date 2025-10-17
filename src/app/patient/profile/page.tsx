@@ -1197,7 +1197,7 @@ export default function PatientProfile() {
             ) : (
               <div />
             )}
-            <h1 className="text-xl font-bold text-gray-900">Mediconnect</h1>
+            <h1 className="text-xl font-bold text-gray-900">HealthHub</h1>
             <div className="w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center text-sm font-semibold">
               {userInitials}
             </div>

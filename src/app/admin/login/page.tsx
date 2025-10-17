@@ -54,7 +54,7 @@ export default function AdminLogin() {
       <div className="bg-surface p-8 rounded-card shadow-card w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-ink mb-2">Admin Login</h1>
-          <p className="text-body">Mediconnect Administration Portal</p>
+          <p className="text-body">HealthHub Administration Portal</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -75,7 +75,7 @@ export default function AdminLogin() {
               value={credentials.email}
               onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
               className="w-full px-4 py-3 border border-border rounded-button focus:outline-none focus:ring-2 focus:ring-primary-600"
-              placeholder="admin@mediconnect.com"
+              placeholder="admin@healthhub.com"
               disabled={loading}
             />
           </div>

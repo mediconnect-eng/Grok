@@ -334,7 +334,7 @@ export default function PrescriptionDetailPage() {
                 <div className="mt-6 max-w-md mx-auto text-left bg-blue-50 p-4 rounded-lg">
                   <h5 className="font-medium text-blue-900 mb-2">How to use:</h5>
                   <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                    <li>Visit any verified Mediconnect pharmacy</li>
+                    <li>Visit any verified HealthHub pharmacy</li>
                     <li>Show this QR code to the pharmacist</li>
                     <li>They'll scan it to access your prescription</li>
                     <li>You'll receive a notification when it's ready</li>

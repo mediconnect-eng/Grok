@@ -1,5 +1,5 @@
 /**
- * Email Service for MediConnect
+ * Email Service for HealthHub
  * Handles all email communications including verification, notifications, and transactional emails
  */
 
@@ -17,8 +17,8 @@ const SMTP_CONFIG = {
   },
 };
 
-const FROM_EMAIL = process.env.SMTP_FROM || 'noreply@mediconnect.com';
-const FROM_NAME = 'MediConnect';
+const FROM_EMAIL = process.env.SMTP_FROM || 'noreply@healthhub.com';
+const FROM_NAME = 'HealthHub';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
 // Create reusable transporter
@@ -96,7 +96,7 @@ export async function sendVerificationEmail(
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Verify Your Email - MediConnect</title>
+      <title>Verify Your Email - HealthHub</title>
       <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
@@ -109,12 +109,12 @@ export async function sendVerificationEmail(
     </head>
     <body>
       <div class="header">
-        <h1 style="margin: 0; font-size: 28px;">🏥 Welcome to MediConnect</h1>
+        <h1 style="margin: 0; font-size: 28px;">🏥 Welcome to HealthHub</h1>
       </div>
       <div class="content">
         <h2 style="color: #1f2937; margin-top: 0;">Hi ${name}! 👋</h2>
         
-        <p>Thank you for signing up with MediConnect. We're excited to have you on board!</p>
+        <p>Thank you for signing up with HealthHub. We're excited to have you on board!</p>
         
         <p><strong>Please verify your email address to activate your account.</strong></p>
         
@@ -141,8 +141,8 @@ export async function sendVerificationEmail(
         <p>If you didn't create this account, please ignore this email.</p>
       </div>
       <div class="footer">
-        <p>MediConnect - Healthcare Made Simple</p>
-        <p>Need help? Contact us at support@mediconnect.com</p>
+        <p>HealthHub - Healthcare Made Simple</p>
+        <p>Need help? Contact us at support@HealthHub.com</p>
       </div>
     </body>
     </html>
@@ -150,7 +150,7 @@ export async function sendVerificationEmail(
 
   return sendEmail({
     to: email,
-    subject: 'Verify Your Email - MediConnect',
+    subject: 'Verify Your Email - HealthHub',
     html,
   });
 }
@@ -182,7 +182,7 @@ export async function sendEmailVerifiedConfirmation(
         <p>Your email has been successfully verified. Your account is now active!</p>
         
         <div style="text-align: center;">
-          <a href="${APP_URL}" class="button">Go to MediConnect</a>
+          <a href="${APP_URL}" class="button">Go to HealthHub</a>
         </div>
         
         <p><strong>You can now:</strong></p>
@@ -199,7 +199,7 @@ export async function sendEmailVerifiedConfirmation(
 
   return sendEmail({
     to: email,
-    subject: 'Email Verified - Welcome to MediConnect! 🎉',
+    subject: 'Email Verified - Welcome to HealthHub! 🎉',
     html,
   });
 }
@@ -229,7 +229,7 @@ export async function sendProviderApplicationReceived(
       <div class="content">
         <h2 style="color: #1f2937;">Dear ${name},</h2>
         
-        <p>Thank you for your interest in joining MediConnect as a healthcare ${providerType}!</p>
+        <p>Thank you for your interest in joining HealthHub as a healthcare ${providerType}!</p>
         
         <div class="status-box">
           <strong>Application Status: UNDER REVIEW</strong><br>
@@ -261,7 +261,7 @@ export async function sendProviderApplicationReceived(
 
   return sendEmail({
     to: email,
-    subject: 'Application Received - MediConnect Healthcare Provider',
+    subject: 'Application Received - HealthHub Healthcare Provider',
     html,
   });
 }
@@ -295,10 +295,10 @@ export async function sendProviderApplicationApproved(
         
         <div class="success-box">
           <strong>✓ Your application has been approved!</strong><br>
-          You can now login and start providing healthcare services on MediConnect.
+          You can now login and start providing healthcare services on HealthHub.
         </div>
         
-        <p>Welcome to the MediConnect healthcare network! We're thrilled to have you on board.</p>
+        <p>Welcome to the HealthHub healthcare network! We're thrilled to have you on board.</p>
         
         <div style="text-align: center;">
           <a href="${loginUrl}" class="button">Login to Your Dashboard</a>
@@ -323,7 +323,7 @@ export async function sendProviderApplicationApproved(
 
   return sendEmail({
     to: email,
-    subject: '🎉 Application Approved - Welcome to MediConnect!',
+    subject: '🎉 Application Approved - Welcome to HealthHub!',
     html,
   });
 }
@@ -353,16 +353,16 @@ export async function sendProviderApplicationRejected(
       <div class="content">
         <h2 style="color: #1f2937;">Dear ${name},</h2>
         
-        <p>Thank you for your interest in joining MediConnect. After careful review of your application, we regret to inform you that we are unable to approve your application at this time.</p>
+        <p>Thank you for your interest in joining HealthHub. After careful review of your application, we regret to inform you that we are unable to approve your application at this time.</p>
         
         <div class="info-box">
           <strong>Reason:</strong><br>
           ${reason}
         </div>
         
-        <p>If you believe there was an error or would like to reapply with updated information, please contact our support team at support@mediconnect.com.</p>
+        <p>If you believe there was an error or would like to reapply with updated information, please contact our support team at support@HealthHub.com.</p>
         
-        <p>We appreciate your interest in MediConnect and wish you the best in your professional endeavors.</p>
+        <p>We appreciate your interest in HealthHub and wish you the best in your professional endeavors.</p>
       </div>
     </body>
     </html>
@@ -370,7 +370,7 @@ export async function sendProviderApplicationRejected(
 
   return sendEmail({
     to: email,
-    subject: 'Application Status Update - MediConnect',
+    subject: 'Application Status Update - HealthHub',
     html,
   });
 }
@@ -403,7 +403,7 @@ export async function sendPasswordResetEmail(
       <div class="content">
         <h2 style="color: #1f2937;">Hi ${name},</h2>
         
-        <p>We received a request to reset your MediConnect password.</p>
+        <p>We received a request to reset your HealthHub password.</p>
         
         <div style="text-align: center;">
           <a href="${resetUrl}" class="button">Reset Password</a>
@@ -427,7 +427,7 @@ export async function sendPasswordResetEmail(
 
   return sendEmail({
     to: email,
-    subject: 'Password Reset Request - MediConnect',
+    subject: 'Password Reset Request - HealthHub',
     html,
   });
 }
@@ -442,3 +442,4 @@ const emailService = {
 };
 
 export default emailService;
+
