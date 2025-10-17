@@ -10,7 +10,8 @@ import { z } from 'zod';
 /**
  * Common field validations
  */
-const uuid = z.string().uuid('Invalid ID format');
+// Flexible ID validation - accepts UUID or Better Auth ID format
+const uuid = z.string().min(1, 'ID is required').max(255, 'ID too long');
 const email = z.string().email('Invalid email address');
 const phone = z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format');
 const url = z.string().url('Invalid URL format');
