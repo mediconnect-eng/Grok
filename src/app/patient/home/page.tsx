@@ -226,7 +226,7 @@ export default function PatientHome() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-6">
               <Link href="/" className="text-xl font-bold text-gray-900">
-                Mediconnect
+                HealthHub
               </Link>
             </div>
 
@@ -328,7 +328,7 @@ export default function PatientHome() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="bg-white rounded-card shadow-card p-6">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-2xl font-semibold text-white">M</div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-2xl font-semibold text-white">H</div>
               <div>
                 <h2 className="text-lg font-semibold text-primary-900">How can we help today?</h2>
                 <p className="text-sm text-gray-600">Start with AI or talk to a GP</p>
