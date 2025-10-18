@@ -11,6 +11,7 @@ export default function RequestConsultationPage() {
   
   const [formData, setFormData] = useState({
     providerType: 'gp',
+    consultationType: 'video',
     chiefComplaint: '',
     symptoms: '',
     duration: '',
@@ -64,6 +65,7 @@ export default function RequestConsultationPage() {
         body: JSON.stringify({
           patientId: session.user.id,
           providerType: formData.providerType,
+          consultationType: formData.consultationType,
           chiefComplaint: formData.chiefComplaint,
           symptoms: formData.symptoms || null,
           duration: formData.duration || null,
@@ -152,26 +154,86 @@ export default function RequestConsultationPage() {
               </div>
             )}
 
-            {/* Provider Type - Only GP (Specialists require referral) */}
+            {/* Provider Type */}
             <div>
               <label className="block text-sm font-medium text-ink mb-3">
-                Consultation with General Practitioner
+                Type of Provider <span className="text-red-500">*</span>
               </label>
-              <div className="p-4 border-2 border-primary-600 bg-primary-50 rounded-button">
-                <div className="text-center">
-                  <div className="text-3xl mb-2">🩺</div>
-                  <div className="font-semibold text-ink">General Practitioner</div>
-                  <div className="text-sm text-ink-light mt-2">
-                    For general health concerns, prescriptions, and referrals to specialists
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, providerType: 'gp' })}
+                  className={`p-4 border-2 rounded-button transition ${
+                    formData.providerType === 'gp'
+                      ? 'border-primary-600 bg-primary-50'
+                      : 'border-gray-300 hover:border-primary-400'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">🩺</div>
+                    <div className="font-semibold text-ink">General Practitioner</div>
+                    <div className="text-sm text-ink-light mt-1">For general health concerns</div>
+                    <div className="text-sm text-primary-600 font-medium mt-2">$50</div>
                   </div>
-                </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, providerType: 'specialist' })}
+                  className={`p-4 border-2 rounded-button transition ${
+                    formData.providerType === 'specialist'
+                      ? 'border-primary-600 bg-primary-50'
+                      : 'border-gray-300 hover:border-primary-400'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">👨‍⚕️</div>
+                    <div className="font-semibold text-ink">Specialist</div>
+                    <div className="text-sm text-ink-light mt-1">For specialized care</div>
+                    <div className="text-sm text-primary-600 font-medium mt-2">$100</div>
+                  </div>
+                </button>
               </div>
-              <p className="text-sm text-blue-600 mt-2 flex items-start">
-                <svg className="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                <span>To see a specialist, first consult with a GP who can provide a referral if needed.</span>
-              </p>
+            </div>
+
+            {/* Consultation Type */}
+            <div>
+              <label className="block text-sm font-medium text-ink mb-3">
+                Consultation Method <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, consultationType: 'video' })}
+                  className={`p-4 border-2 rounded-button transition ${
+                    formData.consultationType === 'video'
+                      ? 'border-primary-600 bg-primary-50'
+                      : 'border-gray-300 hover:border-primary-400'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">📹</div>
+                    <div className="font-semibold text-ink">Video Call</div>
+                    <div className="text-sm text-ink-light mt-1">Face-to-face consultation</div>
+                    <div className="text-xs text-ink-lighter mt-2">Recommended for detailed assessment</div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, consultationType: 'chat' })}
+                  className={`p-4 border-2 rounded-button transition ${
+                    formData.consultationType === 'chat'
+                      ? 'border-primary-600 bg-primary-50'
+                      : 'border-gray-300 hover:border-primary-400'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">💬</div>
+                    <div className="font-semibold text-ink">Text Chat</div>
+                    <div className="text-sm text-ink-light mt-1">Message-based consultation</div>
+                    <div className="text-xs text-ink-lighter mt-2">Good for simple queries</div>
+                  </div>
+                </button>
+              </div>
             </div>
 
             {/* Chief Complaint */}

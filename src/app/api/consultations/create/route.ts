@@ -23,10 +23,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 2: Authentication
-    // Allow any authenticated user to create a consultation (some sessions may not have an explicit role)
     const authResult = await requireAuth(request, {
       requireAuth: true,
-      requiredRoles: [], // empty = any authenticated user
+      requiredRoles: ['patient'],
     });
 
     if (!authResult.success) {
@@ -51,6 +50,7 @@ export async function POST(request: NextRequest) {
     const {
       patientId,
       providerType,
+      consultationType,
       chiefComplaint,
       symptoms,
       duration,
@@ -97,16 +97,17 @@ export async function POST(request: NextRequest) {
 
       const consultation = await client.query(
         `INSERT INTO consultations (
-          id, patient_id, provider_type, chief_complaint, symptoms,
+          id, patient_id, provider_type, consultation_type, chief_complaint, symptoms,
           duration, urgency, preferred_date, consultation_fee,
           status, attachments, created_at, updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', $10, NOW(), NOW())
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending', $11, NOW(), NOW())
         RETURNING *`,
         [
           consultationId,
           patientId,
           providerType,
+          consultationType || 'video',
           chiefComplaint,
           symptoms || null,
           duration || null,
@@ -195,10 +196,10 @@ export async function GET(request: NextRequest) {
       return rateLimitResult.response!;
     }
 
-    // Step 2: Authentication - allow any authenticated user to fetch their consultations
+    // Step 2: Authentication
     const authResult = await requireAuth(request, {
       requireAuth: true,
-      requiredRoles: [],
+      requiredRoles: ['patient'],
     });
 
     if (!authResult.success) {

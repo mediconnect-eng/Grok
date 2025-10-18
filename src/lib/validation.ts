@@ -63,6 +63,9 @@ export const CreateConsultationSchema = z.object({
   providerType: z.enum(['gp', 'specialist'], {
     message: 'Provider type must be either "gp" or "specialist"',
   }),
+  consultationType: z.enum(['video', 'chat'], {
+    message: 'Consultation type must be either "video" or "chat"',
+  }).optional().default('video'),
   chiefComplaint: z.string().min(5, 'Chief complaint must be at least 5 characters').max(500),
   symptoms: z.string().max(2000, 'Symptoms description too long').optional(),
   duration: z.string().max(200, 'Duration description too long').optional(),
