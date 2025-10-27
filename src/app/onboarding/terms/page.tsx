@@ -20,7 +20,7 @@ export default function TermsConsent() {
           </div>
           <div>
             <h3 className="font-semibold">Terms of Service</h3>
-            <p className="text-sm text-gray-600">By using HealthHub, you agree to our terms of service.</p>
+            <p className="text-sm text-gray-600">By using Mediconnect, you agree to our terms of service.</p>
           </div>
         </div>
 

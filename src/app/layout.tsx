@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 
-export const metadata = {
-  title: 'HealthHub - Digital Healthcare Platform',
-  description: 'Connecting patients with healthcare providers',
+export const metadata: Metadata = {
+  title: 'Mediconnect - Digital Healthcare Platform',
+  description: 'Connecting patients, healthcare providers, and pharmacies through secure digital solutions',
 }
 
 export default function RootLayout({

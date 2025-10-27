@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp, signIn } from '@/lib/auth-client';
+import { signUp } from '@/lib/auth-client';
 
 export default function PatientSignup() {
   const router = useRouter();
@@ -42,28 +42,27 @@ export default function PatientSignup() {
     }
 
     try {
-      // Use custom signup endpoint that sets role in database
-      const response = await fetch('/api/auth/signup-with-role', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email.trim(),
-          password: formData.password,
-          name: formData.name.trim(),
-          role: 'patient',
-        }),
+      const result = await signUp.email({
+        email: formData.email.trim(),
+        password: formData.password,
+        name: formData.name.trim(),
       });
 
-      const result = await response.json();
+      if (result.error) {
+        setError(result.error.message || 'Signup failed. Please try again.');
+      } else if (result.data?.user?.id) {
+        // Set role to patient
+        await fetch('/api/auth/update-role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: result.data.user.id,
+            role: 'patient',
+          }),
+        });
 
-      if (!response.ok || result.error) {
-        setError(result.error || 'Signup failed. Please try again.');
-      } else {
-        // Signup successful - role is now set in database
-        console.log('Patient signup successful:', result);
-        router.push('/patient/login?new=true');
+        // Signup successful - redirect to patient home
+        router.push('/patient/home');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
@@ -78,13 +77,12 @@ export default function PatientSignup() {
     setError('');
     
     try {
-      await signIn.social({
-        provider: 'google',
-        callbackURL: '/patient/home',
-      });
+      // For now, we'll show a message that Google OAuth is not yet implemented
+      setError('Google sign-in will be available in the next update. Please use email registration for now.');
     } catch (err) {
-      setError('Google sign-up failed. Please try again.');
+      setError('Google sign-in failed. Please try again.');
       console.error('Google signup error:', err);
+    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -105,14 +103,14 @@ export default function PatientSignup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full bg-slate-800/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-500/20 p-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-white text-2xl font-bold">P</span>
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-white text-2xl font-bold">M</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Create Account</h1>
-          <p className="text-gray-300 mt-2">Join HealthHub for better healthcare</p>
+          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
+          <p className="text-gray-600 mt-2">Join Mediconnect for better healthcare</p>
         </div>
 
         {/* Google Sign Up Button */}
@@ -132,18 +130,18 @@ export default function PatientSignup() {
 
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-600"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-3 bg-slate-800/40 text-gray-300">Or sign up with email</span>
+            <span className="px-3 bg-white text-gray-500">Or sign up with email</span>
           </div>
         </div>
 
         <form onSubmit={(e) => { e.preventDefault(); handleSignUp(); }} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Full Name *
@@ -154,15 +152,15 @@ export default function PatientSignup() {
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Enter your full name"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                 </svg>
                 Email Address *
@@ -173,15 +171,15 @@ export default function PatientSignup() {
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="your.email@example.com"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 Phone Number
@@ -192,12 +190,12 @@ export default function PatientSignup() {
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               placeholder="+254 700 000 000"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4m-4 6v4m-6 0h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
@@ -209,12 +207,12 @@ export default function PatientSignup() {
               type="date"
               value={formData.dateOfBirth}
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -227,13 +225,13 @@ export default function PatientSignup() {
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               <span className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -246,7 +244,7 @@ export default function PatientSignup() {
               value={formData.confirmPassword}
               onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
               placeholder="Confirm your password"
-              className="w-full px-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               required
             />
           </div>
@@ -283,7 +281,7 @@ export default function PatientSignup() {
             <button
               type="button"
               onClick={handleLogin}
-              className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
             >
               Already have an account? Sign in
             </button>
@@ -292,7 +290,7 @@ export default function PatientSignup() {
               <button
                 type="button"
                 onClick={handleBackClick}
-                className="flex items-center gap-2 text-gray-300 hover:text-white text-sm transition-colors"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -302,8 +300,8 @@ export default function PatientSignup() {
             </div>
           </div>
 
-          <div className="text-center pt-4 border-t border-gray-700">
-            <p className="text-xs text-gray-400">
+          <div className="text-center pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500">
               By creating an account, you agree to our Terms of Service and Privacy Policy
             </p>
           </div>

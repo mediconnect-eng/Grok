@@ -34,7 +34,6 @@ export default function RoleLogin({ role, onLogin }: RoleLoginProps) {
       const result = await signIn.email({
         email,
         password,
-        callbackURL: roleRedirects[role.toLowerCase()] || '/',
       });
 
       if (result.error) {
@@ -46,6 +45,37 @@ export default function RoleLogin({ role, onLogin }: RoleLoginProps) {
         );
         return;
       }
+
+      // Validate user has the correct role for this portal
+      if (result.data?.user?.id) {
+        try {
+          const response = await fetch(`/api/user/role?userId=${result.data.user.id}`);
+          const userData = await response.json();
+          
+          const expectedRole = role.toLowerCase();
+          const userRole = userData.role?.toLowerCase();
+          
+          // Allow diagnostic-center to login as diagnostics
+          const isValidRole = userRole === expectedRole || 
+            (expectedRole === 'diagnostics' && userRole === 'diagnostic-center');
+          
+          if (!isValidRole) {
+            setError(
+              `❌ Wrong Portal!\n\n` +
+              `This account is registered as: ${userRole || 'patient'}\n` +
+              `You are trying to access: ${expectedRole} portal\n\n` +
+              `Please use the correct portal for your account type.`
+            );
+            return;
+          }
+        } catch (fetchError) {
+          console.warn('Could not verify user role:', fetchError);
+          // Continue with login if role check fails (backward compatibility)
+        }
+      }
+
+      // Wait for session to be established
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // If successful, trigger the onLogin callback and redirect
       onLogin(email);

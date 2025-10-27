@@ -13,12 +13,12 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Image
+              <Image 
                 src="/mediconnect_brand_pack/mediconnect-logo-wordmark.svg" 
-                alt="HealthHub" 
-                width={180} 
-                height={40}
-                className="h-10 w-auto"
+                alt="Mediconnect" 
+                width={160} 
+                height={32}
+                className="h-8 w-auto"
               />
             </Link>
             <nav className="hidden md:flex ml-8 space-x-6">

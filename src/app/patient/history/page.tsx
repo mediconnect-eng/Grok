@@ -287,7 +287,7 @@ export default function PatientHistoryPage() {
             <p className="text-gray-600 mb-6">
               {searchQuery || filter !== 'all'
                 ? 'Try adjusting your filters or search query'
-                : 'Your medical history will appear here as you use HealthHub services'}
+                : 'Your medical history will appear here as you use Mediconnect services'}
             </p>
             {(searchQuery || filter !== 'all') && (
               <button
