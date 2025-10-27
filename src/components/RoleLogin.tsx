@@ -13,8 +13,9 @@ const roleRedirects: Record<string, string> = {
   patient: '/patient/home',
   gp: '/gp',
   specialist: '/specialist',
-  pharmacy: '/pharmacy/login',
-  diagnostics: '/diagnostics/login',
+  pharmacy: '/pharmacy/scanner',
+  diagnostics: '/diagnostics/orders',
+  admin: '/admin',
 };
 
 export default function RoleLogin({ role, onLogin }: RoleLoginProps) {
@@ -130,7 +131,7 @@ export default function RoleLogin({ role, onLogin }: RoleLoginProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={`${role.toLowerCase()}@healthhub.com`}
+                  placeholder={`${role.toLowerCase()}@mediconnect.com`}
                   className="appearance-none block w-full px-3 py-2 border border-border rounded-button placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm"
                 />
               </div>

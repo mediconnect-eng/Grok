@@ -2,12 +2,27 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '@/lib/auth-client';
 import { validatePassword, getPasswordStrengthColor, getPasswordStrengthLabel } from '@/lib/password-validation';
 
 interface RoleSignupProps {
   role: string;
 }
+
+const LOGIN_REDIRECTS: Record<string, string> = {
+  patient: '/auth/patient/login',
+  gp: '/auth/gp/login',
+  specialist: '/auth/specialist/login',
+  pharmacy: '/auth/pharmacy/login',
+  diagnostics: '/auth/diagnostics/login',
+  admin: '/admin/login',
+};
+
+const toRoleKey = (value: string): string => value.trim().toLowerCase();
+
+const resolveLoginRedirect = (roleValue: string): string => {
+  const key = toRoleKey(roleValue);
+  return LOGIN_REDIRECTS[key] ?? `/auth/${key}/login`;
+};
 
 export default function RoleSignup({ role }: RoleSignupProps) {
   const [name, setName] = useState('');
@@ -50,55 +65,38 @@ export default function RoleSignup({ role }: RoleSignupProps) {
     setLoading(true);
 
     try {
-      // Sign up with Better Auth
-      const result = await signUp.email({
-        email,
-        password,
-        name,
-        // Store role in user metadata or additional fields if needed
-        callbackURL: role.toLowerCase() === 'patient' ? '/patient/home' :
-                     role.toLowerCase() === 'gp' ? '/gp' :
-                     role.toLowerCase() === 'specialist' ? '/specialist' :
-                     role.toLowerCase() === 'pharmacy' ? '/pharmacy/scanner' :
-                     role.toLowerCase() === 'diagnostics' ? '/diagnostics/orders' : '/'
+      const roleKey = toRoleKey(role);
+      const response = await fetch('/api/auth/signup-with-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          password,
+          role: roleKey,
+        }),
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Signup failed. Please try again.');
-        setLoading(false);
+      let data: any = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (!response.ok) {
+        setError(data.error || 'Signup failed. Please try again.');
         return;
       }
 
-      // Store role in localStorage for demo purposes
-      try {
-        localStorage.setItem('userRole', role.toLowerCase());
-      } catch (e) {
-        console.error('Failed to store role:', e);
-      }
-
-      // Redirect based on role
-      switch (role.toLowerCase()) {
-        case 'patient': 
-          router.push('/patient/home'); 
-          break;
-        case 'gp': 
-          router.push('/gp'); 
-          break;
-        case 'specialist': 
-          router.push('/specialist'); 
-          break;
-        case 'pharmacy': 
-          router.push('/pharmacy/scanner'); 
-          break;
-        case 'diagnostics': 
-          router.push('/diagnostics/orders'); 
-          break;
-        default: 
-          router.push('/');
-      }
+      const nextRole = typeof data.role === 'string' ? data.role : roleKey;
+      router.push(resolveLoginRedirect(nextRole));
     } catch (err: any) {
       console.error('Signup error:', err);
-      setError(err.message || 'An unexpected error occurred. Please try again.');
+      setError(err?.message || 'An unexpected error occurred. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
