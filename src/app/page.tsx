@@ -149,65 +149,117 @@ export default function Home() {
           </aside>
         </section>
 
-        <section className="mx-auto max-w-6xl rounded-card border border-gray-100 bg-surface p-10 shadow-card">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-            <div>
-              <h2 className="text-2xl font-semibold text-primary-900 sm:text-3xl">Health video library</h2>
-              <p className="mt-3 text-sm text-body">
-                We&apos;re curating patient-friendly videos covering telehealth prep, medication safety, and
-                specialist follow-up checklists. While we finalise licensing, your personalised playlist will live
-                right here.
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                {[1, 2].map((slot) => (
-                  <div
-                    key={slot}
-                    className="flex h-32 flex-col justify-between rounded-xl border border-dashed border-primary-200 bg-primary-50/60 p-4 text-primary-700"
-                  >
-                    <div className="flex items-center gap-3">
-                      <VideoCallIcon className="h-6 w-6 text-primary-500" />
-                      <span className="text-sm font-medium">Video slot {slot}</span>
-                    </div>
-                    <p className="text-xs text-primary-600">
-                      Uploads coming soon—talking guides and care explainers will unlock for your account.
-                    </p>
-                  </div>
-                ))}
+        <section className="mx-auto max-w-6xl space-y-12 px-6 lg:px-8">
+          <div className="text-center">
+            <span className="text-sm font-semibold uppercase tracking-wider text-teal-600">CARE JOURNEYS</span>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-4xl">Every handoff stays visible and on time</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+              Guide patients from first booking through specialist care and long-term follow-up. HealthHub keeps tasks, notes, refills, and consult records in one shared thread so nothing slips between teams.
+            </p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                <span className="text-2xl font-bold">1</span>
               </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Welcome and triage</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                Guide patients through digital intake, consents, and pre-consult checklists before the first session.
+              </p>
             </div>
-            <div className="rounded-2xl border border-gray-200 bg-surfaceAlt p-6">
-              <h3 className="text-lg font-semibold text-primary-900">How it works</h3>
-              <ol className="mt-4 space-y-4 text-sm text-body">
-                <li>
-                  <span className="font-semibold text-primary-700">1.</span> GP triage collects intake + consents.
-                </li>
-                <li>
-                  <span className="font-semibold text-primary-700">2.</span> Specialist engagement opens after GP
-                  approval—same thread, richer tooling.
-                </li>
-                <li>
-                  <span className="font-semibold text-primary-700">3.</span> Diagnostics and pharmacy fulfilment see
-                  only the data they need, automatically.
-                </li>
-              </ol>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                <span className="text-2xl font-bold">2</span>
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Collaborative consults</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                GPs, specialists share notes and decisions, and access full context without needing to call or chase files.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                <span className="text-2xl font-bold">3</span>
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Diagnostics in lockstep</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                Orders transfer with a click, and results post back into the shared thread with alerts to the relevant practitioner.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                <span className="text-2xl font-bold">4</span>
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Medication and follow-up</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                Pharmacies confirm dispensing and provide counseling notes while patients get clear reminders.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                <ShieldIcon className="h-7 w-7" />
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Role-based secure controls</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                Each partner sees only what's needed for their role. Logs track who accessed what and when for full compliance.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                <VideoCallIcon className="h-7 w-7" />
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-slate-900">Audit-ready history</h3>
+              <p className="mt-3 text-sm text-slate-600">
+                Every care event is timestamped, logged, and tied to the patient thread so audits stay simple and transparent.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-teal-700 to-slate-800 p-12 text-center text-white shadow-2xl">
+            <h2 className="text-3xl font-semibold sm:text-4xl">Ready to bring your care network together?</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-teal-100">
+              HealthHub is agile enough to grow your network, versatile enough to handle any care model, and secure enough for regulated healthcare delivery.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link
+                href="/patient/signup"
+                className="rounded-full bg-white px-8 py-4 text-base font-semibold text-teal-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+              >
+                Create patient account
+              </Link>
+              <Link
+                href="/contact"
+                className="rounded-full border-2 border-white px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10"
+              >
+                Schedule a discovery call
+              </Link>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-white/10 bg-primary-900/70 py-10 text-center text-sm text-white/70 backdrop-blur">
+      <footer className="border-t border-slate-800 bg-slate-900 py-12 text-center text-sm text-slate-400">
         <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6 px-6">
-          <Link href="/privacy" className="hover:text-white">
+          <Link href="/privacy" className="hover:text-teal-400">
             Privacy Policy
           </Link>
-          <Link href="/terms" className="hover:text-white">
+          <Link href="/terms" className="hover:text-teal-400">
             Terms of Service
           </Link>
-          <Link href="/contact" className="hover:text-white">
-            Contact Us
+          <Link href="/contact" className="hover:text-teal-400">
+            Contact
           </Link>
         </div>
-        <p className="mt-6 text-xs text-white/60">&copy; {new Date().getFullYear()} Mediconnect. All rights reserved.</p>
+        <p className="mt-6 text-xs text-slate-500">&copy; {new Date().getFullYear()} HealthHub. All rights reserved.</p>
       </footer>
     </div>
   );
